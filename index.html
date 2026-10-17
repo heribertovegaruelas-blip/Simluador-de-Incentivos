@@ -7,107 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
-<style>
-/* Look de las infografías Captavale: encabezado crema con círculos y logo, fórmula en barra verde, tarjetas blancas con sombra suave y resultado tipo recibo. */
-:root{
-  --deep:#0A4D2C; --brand-2:#1F7A45; --mid:#2E9A5B; --lime:#C8E85A; --cream:#EEECE1; --on-brand:#FFFFFF; --on-brand-soft:#CFE3D6;
-  --bg:#F3F6F1; --surface:#FFFFFF; --surface-2:#EAF4EC; --ink:#14261B; --muted:#5B6B62; --line:#E3E9E2; --title:#0A4D2C;
-  --good:#1E7B4B; --warn:#8A5A00; --warn-bg:#FCEFD6; --bad:#B42318; --bad-bg:#FDECEA; --tip-bg:#EEF7E0; --shadow:0 4px 18px rgba(10,77,44,.07);
-  --font:'Montserrat', 'Segoe UI', system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --deep:#0B3A22; --brand-2:#5FD08F; --mid:#3DB56A; --cream:#17281E; --on-brand:#F1F8F3; --on-brand-soft:#A9CDB6;
-  --bg:#0C1712; --surface:#13241A; --surface-2:#1B3325; --ink:#E6F2EA; --muted:#9DB8A6; --line:#26412F; --title:#C8E85A;
-  --good:#5FD08F; --warn:#F2C46B; --warn-bg:#3A2E12; --bad:#FF8A80; --bad-bg:#3D1A17; --tip-bg:#1F3320; --shadow:none; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --deep:#0B3A22; --brand-2:#5FD08F; --mid:#3DB56A; --cream:#17281E; --on-brand:#F1F8F3; --on-brand-soft:#A9CDB6;
-  --bg:#0C1712; --surface:#13241A; --surface-2:#1B3325; --ink:#E6F2EA; --muted:#9DB8A6; --line:#26412F; --title:#C8E85A;
-  --good:#5FD08F; --warn:#F2C46B; --warn-bg:#3A2E12; --bad:#FF8A80; --bad-bg:#3D1A17; --tip-bg:#1F3320; --shadow:none; color-scheme:dark}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45}
-.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
-header{position:relative;background:var(--cream);overflow:hidden}
-header .c1{position:absolute;right:-140px;top:-180px;width:520px;height:520px;border-radius:50%;background:var(--brand-2);opacity:.10;pointer-events:none}
-header .c2{position:absolute;right:24%;bottom:-210px;width:320px;height:320px;border-radius:50%;background:var(--lime);opacity:.35;pointer-events:none}
-header .wrap{position:relative;padding-block:36px 30px;display:flex;flex-direction:column;gap:12px}
-.logo{position:absolute;right:max(16px, env(safe-area-inset-right, 0px));top:30px;width:190px;height:auto}
-@media (max-width:640px){.logo{position:static;width:150px;order:-1}}
-.chip{align-self:flex-start;background:var(--deep);color:var(--lime);font-weight:800;font-size:12px;letter-spacing:.14em;padding:7px 14px;border-radius:999px;text-transform:uppercase}
-h1{margin:0;font-size:clamp(30px,4.8vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.5px;color:var(--title);text-wrap:balance;max-width:16ch}
-header p{margin:0;color:var(--muted);max-width:60ch;font-size:17px}
-.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.tab{font:inherit;font-weight:700;font-size:15px;border:0;background:var(--surface);color:var(--title);padding:11px 20px;border-radius:999px;cursor:pointer;min-height:44px;box-shadow:var(--shadow)}
-.tab[aria-pressed="true"]{background:var(--deep);color:var(--lime)}
-.tab:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
-.formula{background:linear-gradient(135deg,#0A4D2C 0%,#0F6B3D 100%);border-radius:20px;padding:18px 20px;color:#fff;margin-top:10px}
-.formula .lbl{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--lime)}
-.ftoks{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px}
-.tok{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:8px 12px;font-size:14.5px;font-weight:700;line-height:1.2}
-.tok small{display:block;font-size:12px;font-weight:500;color:#CFE3D6;margin-top:2px}
-.tok.l{background:#C8E85A;color:#0A4D2C;border-color:#C8E85A} .tok.l small{color:#3C5E28}
-.op{font-size:22px;font-weight:800;color:#C8E85A}
-main .wrap{padding-block:28px 40px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:24px;align-items:start}
-@media (max-width:820px){main .wrap{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--surface);border-radius:22px;padding:26px;box-shadow:var(--shadow);border:1px solid transparent}
-.card h2{margin:0 0 4px;font-size:21px;font-weight:800;color:var(--title);letter-spacing:-.2px}
-.hint{margin:0 0 18px;color:var(--muted);font-size:14px}
-.field{display:flex;flex-direction:column;gap:8px;padding-block:14px;border-top:1px solid var(--line)}
-.field:first-of-type{border-top:0;padding-top:4px}
-.field label{font-weight:700;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
-.field label small{font-weight:500;color:var(--muted);font-size:13px}
-.row{display:flex;gap:12px;align-items:center}
-.row input[type=range]{flex:1;min-width:0;accent-color:var(--mid);height:28px}
-.num{width:140px;flex:none;font:inherit;font-weight:700;font-variant-numeric:tabular-nums;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);text-align:right}
-.num.short{width:96px}
-.checks{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px solid var(--line)}
-.check{display:flex;gap:10px;align-items:flex-start;font-size:15px;cursor:pointer}
-.check input{width:20px;height:20px;accent-color:var(--mid);flex:none;margin-top:2px}
-.result{display:flex;flex-direction:column;gap:20px}
-.hero{background:linear-gradient(135deg,#0A4D2C 0%,#0F6B3D 100%);color:#fff;border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:8px;box-shadow:0 12px 32px rgba(10,77,44,.22)}
-.hero .lbl{color:#C8E85A;font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
-.hero .totalbox{background:#C8E85A;color:#0A4D2C;border-radius:16px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:4px}
-.hero .totalbox span{font-weight:800;font-size:15px}
-.hero .big{font-size:clamp(38px,6.5vw,56px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
-.hero .sub{color:#CFE3D6;font-size:14.5px}
-.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
-.pill{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
-.pill.ok{background:#C8E85A;color:#0A4D2C}
-.pill.warn{background:#F2C46B;color:#3A2700}
-.pill.bad{background:#FFB4AB;color:#5C0F0A}
-.breakdown{display:flex;flex-direction:column}
-.line{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
-.line span:last-child{font-weight:800;white-space:nowrap}
-.line.total{border-bottom:0;margin-top:8px;padding:14px 16px;font-size:18px;background:var(--surface-2);border-radius:14px;color:var(--title)}
-.line.muted{color:var(--muted)}
-.progress{display:flex;flex-direction:column;gap:8px}
-.bar{height:16px;background:var(--surface-2);border-radius:999px;overflow:hidden}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mid),var(--lime));border-radius:999px;transition:width .25s}
-.progress p{margin:0;font-size:15px}
-.tips{display:flex;flex-direction:column;gap:12px}
-.tip{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:16px;background:var(--tip-bg)}
-.tip.warn{background:var(--warn-bg)}
-.tip.bad{background:var(--bad-bg)}
-.tip svg{flex:none;width:28px;height:28px;color:var(--brand-2)}
-.tip.warn svg{color:var(--warn)} .tip.bad svg{color:var(--bad)}
-.tip h3{margin:0 0 4px;font-size:16px}
-.tip p{margin:0;font-size:14.5px;color:var(--ink)}
-.tip ul{margin:6px 0 0;padding-left:18px;font-size:14.5px}
-.mtable{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;font-variant-numeric:tabular-nums}
-.mtable th,.mtable td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
-.mtable th{color:var(--brand-2);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:var(--surface-2)}
-.mtable tr.on td{background:#C8E85A;color:#0A4D2C;font-weight:800}
-.scroll{overflow-x:auto}
-.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-.tier{border-radius:14px;padding:12px;color:#fff;opacity:.45}
-.tier.on{opacity:1;box-shadow:0 0 0 3px #C8E85A}
-.tier b{display:block;font-size:12px;letter-spacing:.14em}
-.tier span{display:block;font-size:22px;font-weight:800;line-height:1.1;margin-top:4px}
-.tier small{font-size:12.5px}
-.camp-note{margin:12px 0 0;font-size:14.5px}
-footer{background:var(--deep);color:#CFE3D6}
-footer .wrap{padding-block:18px;font-size:13px}
-@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
-</style>
+<link rel="stylesheet" href="assets/estilo.css">
 <style>body{margin:0}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -117,6 +17,7 @@ footer .wrap{padding-block:18px;font-size:13px}
   <div class="c1"></div><div class="c2"></div>
   <div class="wrap">
     <img class="logo" src="assets/logo.png" alt="Captavale">
+    <nav class="sheets" aria-label="Hojas del simulador"><a class="sheet" href="index.html" aria-current="page">Esquema de incentivos</a><a class="sheet" href="campana.html">Campaña Suma aliadas</a></nav>
     <span class="chip">Captavale · Incentivos 2026</span>
     <h1>Simula tu incentivo</h1>
     <p>Mueve los controles con tus números y mira cuánto cobrarías, cuánto te falta para el siguiente bloque y qué puedes hacer para ganar más.</p>
@@ -147,10 +48,6 @@ footer .wrap{padding-block:18px;font-size:13px}
         <label for="afNNum">Afiliaciones del mes <small>número de aliadas nuevas</small></label>
         <div class="row"><input type="range" id="afNRange" min="0" max="35" step="1" aria-label="Afiliaciones"><input class="num short" id="afNNum" inputmode="numeric"></div>
       </div>
-      <div class="field" id="afTField">
-        <label for="afTNum">Afiliaciones válidas en el trimestre <small>campaña Suma aliadas</small></label>
-        <div class="row"><input type="range" id="afTRange" min="0" max="45" step="1" aria-label="Afiliaciones del trimestre"><input class="num short" id="afTNum" inputmode="numeric"></div>
-      </div>
       <div class="field" id="afPField">
         <label for="afPNum">Cumplimiento de afiliación <small>% de la meta</small></label>
         <div class="row"><input type="range" id="afPRange" min="80" max="110" step="1" aria-label="Afiliación"><input class="num short" id="afPNum" inputmode="decimal"></div>
@@ -167,7 +64,6 @@ footer .wrap{padding-block:18px;font-size:13px}
       <div class="checks">
         <label class="check" id="firstBlockWrap"><input type="checkbox" id="firstBlock"><span id="firstBlockTxt">Es la primera vez que llego a este bloque</span></label>
         <label class="check" id="sucWrap"><input type="checkbox" id="sucMeta"><span>Mi sucursal cumplió el 100% de su meta de afiliación (× 1.10 a mi colocación)</span></label>
-        <label class="check" id="min2Wrap"><input type="checkbox" id="min2" checked><span>Tuve al menos 2 afiliaciones válidas en cada mes del trimestre</span></label>
         <label class="check" id="firstAfWrap"><input type="checkbox" id="firstAf"><span>Es la primera vez que llego a este tramo de afiliación</span></label>
         <label class="check" id="oldWrap"><input type="checkbox" id="oldBranch" checked><span>La sucursal tiene más de 1 año (aplica el candado de rentabilidad)</span></label>
       </div>
@@ -191,17 +87,6 @@ footer .wrap{padding-block:18px;font-size:13px}
         <h2>Tu siguiente bloque</h2>
         <div class="bar" role="img" id="barWrap" aria-label="Avance dentro del bloque"><i id="bar" style="width:0%"></i></div>
         <p id="nextTxt"></p>
-      </div>
-
-      <div class="card" id="campCard">
-        <h2>Campaña "Suma aliadas a tu red"</h2>
-        <p class="hint">Premio al cierre del trimestre: un solo premio, el más alto que ganes.</p>
-        <div class="tiers">
-          <div class="tier" id="tA" style="background:#5F6B78"><b>PLATA</b><span>15–20</span><small>Paquete A</small></div>
-          <div class="tier" id="tB" style="background:#8C6418"><b>ORO</b><span>21–29</span><small>Paquete B</small></div>
-          <div class="tier" id="tC" style="background:#2B3A4A"><b>PLATINO</b><span>30+</span><small>Paquete C</small></div>
-        </div>
-        <p class="camp-note" id="campTxt"></p>
       </div>
 
       <div class="card">
@@ -256,13 +141,13 @@ footer .wrap{padding-block:18px;font-size:13px}
   const ROLES = {
     ej:{tbl:EJ, title:'Tus números del mes', col:'Colocación del mes', colSmall:'monto entregado', colMax:20e6, colStep:50000,
         hero:'Pago estimado del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar)',
-        sample:{col:4500000,cob:98,afN:8,afT:22,afP:100,rent:25,aud:96}},
+        sample:{col:4500000,cob:98,afN:8,afP:100,rent:25,aud:96}},
     ge:{tbl:GE, title:'Los números de tu sucursal', col:'Colocación de la sucursal', colSmall:'suma de tus ejecutivos en el mes', colMax:40e6, colStep:100000,
         hero:'Pago estimado del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (salto al entrar)',
-        sample:{col:10500000,cob:97,afN:8,afT:22,afP:100,rent:25,aud:96}},
+        sample:{col:10500000,cob:97,afN:8,afP:100,rent:25,aud:96}},
     re:{tbl:RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
         hero:'Pago estimado del trimestre', firstTxt:'',
-        sample:{col:125000000,cob:99,afN:8,afT:22,afP:99,rent:16,aud:96}}
+        sample:{col:125000000,cob:99,afN:8,afP:99,rent:16,aud:96}}
   };
 
   const FORMULA = {
@@ -273,7 +158,7 @@ footer .wrap{padding-block:18px;font-size:13px}
   let role = 'ej';
   try { const r = localStorage.getItem('captavale-sim-role'); if (r && ROLES[r]) role = r; } catch(e){}
   const $ = id => document.getElementById(id);
-  const pairs = [['colRange','colNum'],['cobRange','cobNum'],['afNRange','afNNum'],['afTRange','afTNum'],['afPRange','afPNum'],['rentRange','rentNum'],['audRange','audNum']];
+  const pairs = [['colRange','colNum'],['cobRange','cobNum'],['afNRange','afNNum'],['afPRange','afPNum'],['rentRange','rentNum'],['audRange','audNum']];
 
   function blockOf(t, amt){
     let i = Math.min(Math.floor(Math.max(amt,0) / t.step), t.base.length - 1);
@@ -291,10 +176,7 @@ footer .wrap{padding-block:18px;font-size:13px}
     $('colRange').max = R.colMax; $('colRange').step = R.colStep; $('colRange').min = 0;
     $('heroLbl').textContent = R.hero;
     $('afNField').hidden = r !== 'ej';
-    $('afTField').hidden = r !== 'ej';
     $('sucWrap').hidden = r !== 'ej';
-    $('min2Wrap').hidden = r !== 'ej';
-    $('campCard').hidden = r !== 'ej';
     $('ftoks').innerHTML = FORMULA[r].map(x => typeof x === 'string' ? `<span class="op">${x}</span>` : `<div class="tok${x[2]?' l':''}">${x[0]}<small>${x[1]}</small></div>`).join('');
     $('afPField').hidden = r === 'ej';
     $('rentField').hidden = r === 'ej';
@@ -304,8 +186,8 @@ footer .wrap{padding-block:18px;font-size:13px}
     $('firstBlockWrap').hidden = r === 're';
     $('firstBlockTxt').textContent = R.firstTxt;
     const s = R.sample;
-    setVal('col', s.col); setVal('cob', s.cob); setVal('afN', s.afN); setVal('afT', s.afT); setVal('afP', s.afP); setVal('rent', s.rent); setVal('aud', s.aud);
-    $('firstBlock').checked = false; $('firstAf').checked = false; $('sucMeta').checked = false; $('min2').checked = true;
+    setVal('col', s.col); setVal('cob', s.cob); setVal('afN', s.afN); setVal('afP', s.afP); setVal('rent', s.rent); setVal('aud', s.aud);
+    $('firstBlock').checked = false; $('firstAf').checked = false; $('sucMeta').checked = false;
     $('formHint').textContent = 'Datos de ejemplo de la propuesta. Cámbialos por los tuyos.';
     calc();
   }
@@ -342,7 +224,7 @@ footer .wrap{padding-block:18px;font-size:13px}
 
   function calc(){
     const R = ROLES[role], t = R.tbl;
-    const col = getVal('col'), cob = getVal('cob'), afN = Math.floor(getVal('afN')), afT = Math.floor(getVal('afT')), smul = (role === 'ej' && $('sucMeta').checked) ? 1.10 : 1.00, afP = getVal('afP'), rent = getVal('rent'), aud = getVal('aud');
+    const col = getVal('col'), cob = getVal('cob'), afN = Math.floor(getVal('afN')), smul = (role === 'ej' && $('sucMeta').checked) ? 1.10 : 1.00, afP = getVal('afP'), rent = getVal('rent'), aud = getVal('aud');
     const i = blockOf(t, col), code = t.code + (i+1);
     const desde = i * t.step, extraAmt = Math.max(col - desde, 0);
     const base = t.base[i], extra = t.tasa[i] * extraAmt, sub = base + extra;
@@ -451,18 +333,6 @@ footer .wrap{padding-block:18px;font-size:13px}
     }
     $('mtable').innerHTML = h + '</tbody>';
 
-    // campaña Suma aliadas (ejecutivo)
-    if (role === 'ej'){
-      const ok2 = $('min2').checked;
-      const tier = !ok2 ? null : (afT >= 30 ? 'C' : afT >= 21 ? 'B' : afT >= 15 ? 'A' : null);
-      ['A','B','C'].forEach(k => $('t'+k).classList.toggle('on', tier === k));
-      const dias = afN >= 4 ? 'Este mes ganas <b>1 día de descanso</b> (4+ afiliaciones válidas; hasta 3 en el trimestre, se usan en enero–febrero 2027).' : `Con ${4 - afN} afiliación${4-afN===1?'':'es'} más este mes ganas 1 día de descanso.`;
-      let msg;
-      if (!ok2) msg = 'Para el premio del trimestre necesitas al menos 2 afiliaciones válidas en cada mes.';
-      else if (tier) msg = `Con ${afT} afiliaciones válidas en el trimestre ganas el <b>Paquete ${tier}</b>.` + (tier !== 'C' ? ` Te faltan ${tier==='A'?21-afT:30-afT} para el Paquete ${tier==='A'?'B':'C'}.` : '') + (afT >= 35 ? ' Ya superas el mínimo de 35 para competir por el <b>viaje para dos</b> del Top 3 nacional.' : '');
-      else msg = `Llevas ${afT} afiliaciones válidas en el trimestre. Te faltan ${15 - afT} para el Paquete A (Plata).`;
-      $('campTxt').innerHTML = dias + ' ' + msg;
-    }
   }
 
   // enlaces de controles
@@ -472,7 +342,7 @@ footer .wrap{padding-block:18px;font-size:13px}
     $(n).addEventListener('input', () => { const v = getVal(k); $(r).value = v; calc(); });
     $(n).addEventListener('blur', () => setVal(k, getVal(k)));
   });
-  ['firstBlock','firstAf','oldBranch','sucMeta','min2'].forEach(id => $(id).addEventListener('change', calc));
+  ['firstBlock','firstAf','oldBranch','sucMeta'].forEach(id => $(id).addEventListener('change', calc));
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
   $('form').addEventListener('submit', e => e.preventDefault());
   setRole(role);
