@@ -177,7 +177,7 @@ body{margin:0}[hidden]{display:none!important}
     const tips = [];
     m.forEach((x, i) => { if (x < 2) tips.push(['bad', `Mes ${i+1}: te falta la condición`, `Necesitas al menos 2 afiliaciones válidas en cada mes; en el mes ${i+1} llevas ${x}. Sin esto no hay premio del trimestre.`]); });
     if (dias < 3) tips.push(['warn', 'Gana tus días de descanso', `Cada mes con 6 o más afiliaciones válidas te da 1 día. Llevas ${dias} de 3.`]);
-    if (next && next <= TOP) tips.push(['tip', 'Tu siguiente meta', `Con ${next - total} más ${next === TOP ? 'puedes ' + names[next] : 'llegas ' + al(names[next])}. Busca en tiendas, venta por catálogo y emprendedoras de tu zona, y pide referidas a tus mejores aliadas.`]);
+    if (next && next <= TOP) tips.push(['tip', 'Tu siguiente meta', `Con ${next - total} más ${next === TOP ? 'puedes ' + names[next] : 'llegas ' + al(names[next])}. Pide referidas a tus mejores aliadas.`]);
     tips.push(['tip', 'Afilia con calidad', 'Solo cuentan las afiliaciones válidas: haz la misma revisión que al colocar y acompaña a la aliada en sus primeros 30 días.']);
     if (tier && tier[0] === 'C' && total >= TOP) tips.unshift(['ok', '¡Vas por todo!', 'Ya tienes el Paquete C y compites por el viaje. Sigue sumando: el Top 3 se define por quién afilia más.']);
     $('tips').innerHTML = tips.map(t => tip(...t)).join('');
