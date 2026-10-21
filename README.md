@@ -14,13 +14,18 @@ Página para que cada ejecutivo de cuenta, gerente de sucursal y gerente regiona
 3. En un par de minutos la página queda en `https://<tu-usuario>.github.io/simulador-incentivos/`.
 
 ## Actualizar tablas
-Las tablas de bloques, multiplicadores y tramos de afiliación están al inicio del `<script>` de `index.html` (constantes `EJ`, `GE`, `RE`, `EFF` y `AF`). La fórmula que se muestra en el encabezado está en `FORMULA`.
+Las tablas de bloques, cobranza y tramos de afiliación están al inicio del `<script>` de `index.html` (constantes `EJ`, `GE`, `RE`, `EFF`, `AF_EJ`, `AF_GE` y `AF_RE`). La fórmula que se muestra en el encabezado está en `FORMULA`. Los umbrales de la campaña están en `campana.html` (`TIERS`, `DIA` y `TOP`).
 
 ## Versión actual
-Esquema de la presentación ejecutiva del 16/10/2026:
-- Bloques E1–E16 (ejecutivo), G1–G16 (gerente de sucursal) y R1–R21 (regional).
-- Afiliación de gerente y regional por debajo de 90%: × 0.50.
-- Ejecutivo: × 1.10 a la colocación si su sucursal cumple el 100% de su meta de afiliación.
-- Campaña "Suma aliadas a tu red" (hoja aparte): día de descanso con 4+ afiliaciones válidas al mes (máximo 3), condición de 2+ válidas cada mes y paquetes Plata (15–20), Oro (21–29) y Platino (30+); Top 3 nacional con mínimo 35.
+Presentación ejecutiva de octubre 2026 (actualización del 21/10/2026):
+- Bloques C1–C16 (ejecutivo), G1–G16 (gerente de sucursal) y B1–B21 (regional, trimestral, ahora con salto al entrar de $500 a $10,000).
+- Cobranza multiplica la colocación en los tres niveles (0 a 1.30x).
+- Afiliación se paga por tramos en los tres niveles, con bono de entrada la primera vez:
+  - Ejecutivo: de $200 (1 afiliación) a $40,000 (31 o más).
+  - Gerente: afiliaciones de la sucursal en el mes, de $200 (5–10) a $35,000 (101 o más).
+  - Regional: afiliaciones de la región en el trimestre, de $1,000 (101–200) a $50,000 (701 o más).
+- Gerente y regional: candados de rentabilidad (15%) y auditoría (95%). Regional: bono anual de 3 meses con rentabilidad arriba de 20% y EBITDA Capta al 85%.
+- Ya no aplican el multiplicador de afiliación por % de meta ni el × 1.10 del ejecutivo por meta de sucursal.
+- Campaña "Suma aliadas a tu red" (hoja aparte): día de descanso con 6+ afiliaciones válidas al mes (máximo 3), condición de 2+ válidas cada mes y paquetes Plata (20–25), Oro (26–35) y Platino (36+); Top 3 nacional con mínimo 45.
 
 El logo está en `assets/logo.png`.

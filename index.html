@@ -45,12 +45,8 @@
         <div class="row"><input type="range" id="cobRange" min="80" max="105" step="0.1" aria-label="Cobranza"><input class="num short" id="cobNum" inputmode="decimal"></div>
       </div>
       <div class="field" id="afNField">
-        <label for="afNNum">Afiliaciones del mes <small>número de aliadas nuevas</small></label>
+        <label for="afNNum"><span id="afLabelTxt">Afiliaciones del mes</span><small id="afSmall">número de aliadas nuevas</small></label>
         <div class="row"><input type="range" id="afNRange" min="0" max="35" step="1" aria-label="Afiliaciones"><input class="num short" id="afNNum" inputmode="numeric"></div>
-      </div>
-      <div class="field" id="afPField">
-        <label for="afPNum">Cumplimiento de afiliación <small>% de la meta</small></label>
-        <div class="row"><input type="range" id="afPRange" min="80" max="110" step="1" aria-label="Afiliación"><input class="num short" id="afPNum" inputmode="decimal"></div>
       </div>
       <div class="field" id="rentField">
         <label for="rentNum">Rentabilidad acumulada <small>candado: 15% o más</small></label>
@@ -63,8 +59,7 @@
 
       <div class="checks">
         <label class="check" id="firstBlockWrap"><input type="checkbox" id="firstBlock"><span id="firstBlockTxt">Es la primera vez que llego a este bloque</span></label>
-        <label class="check" id="sucWrap"><input type="checkbox" id="sucMeta"><span>Mi sucursal cumplió el 100% de su meta de afiliación (× 1.10 a mi colocación)</span></label>
-        <label class="check" id="firstAfWrap"><input type="checkbox" id="firstAf"><span>Es la primera vez que llego a este tramo de afiliación</span></label>
+        <label class="check" id="firstAfWrap"><input type="checkbox" id="firstAf"><span>Es la primera vez que llego a este tramo de afiliación (bono de entrada)</span></label>
         <label class="check" id="oldWrap"><input type="checkbox" id="oldBranch" checked><span>La sucursal tiene más de 1 año (aplica el candado de rentabilidad)</span></label>
       </div>
     </form>
@@ -96,24 +91,26 @@
       </div>
 
       <div class="card">
-        <h2>Tabla de multiplicadores</h2>
+        <h2>Tablas de cobranza y afiliación</h2>
         <p class="hint" id="multHint"></p>
         <div class="scroll"><table class="mtable" id="mtable"></table></div>
       </div>
     </section>
   </div>
 </main>
-<footer><div class="wrap">Simulador informativo con el esquema de la presentación ejecutiva del 16/10/2026. El pago real lo valida Nómina con las cifras cerradas del periodo.</div></footer>
+<footer><div class="wrap">Simulador informativo con el esquema de la presentación ejecutiva de octubre 2026 (actualización del 21/10/2026). El pago real lo valida Nómina con las cifras cerradas del periodo.</div></footer>
 
 <script>
 (function(){
   const fmt = v => '$' + Math.round(v).toLocaleString('en-US');
   const fmtM = v => '$' + (v/1e6).toLocaleString('en-US',{maximumFractionDigits:2}) + ' M';
   const pct = v => (Math.round(v*1000)/10).toString().replace(/\.0$/,'') ;
+  const num = n => n.toLocaleString('en-US');
 
-  // ---------------- Tablas del esquema
+  // ---------------- Tablas del esquema (presentación ejecutiva, octubre 2026)
+  // Colocación: base del bloque + tasa marginal × excedente; "entra" = incentivo/salto al entrar al bloque (una vez).
   const EJ = {
-    code:'E', step:1e6, period:'mes',
+    code:'C', step:1e6, period:'mes',
     base:[250,1000,2000,3500,6000,7000,8000,11000,13000,15000,16000,20000,22000,24000,26000,35000],
     tasa:[.0008,.0008,.0008,.0009,.0009,.0010,.0010,.0011,.0011,.0012,.0012,.0013,.0013,.0014,.0015,.0015],
     entra:[500,1000,1000,1000,1000,2000,2000,2000,2000,2000,4000,4000,4000,6000,6000,8000]
@@ -125,46 +122,51 @@
     entra:[500,500,500,1000,1000,1000,2000,2000,2000,3000,3000,4000,4000,6000,6000,0]
   };
   const RE = {
-    code:'R', step:15e6, period:'trimestre',
+    code:'B', step:15e6, period:'trimestre',
     base:[5000,7750,11150,15050,19600,24650,30350,36550,43400,50900,58900,67550,76850,86800,97400,108500,120250,132650,145700,159400,173750],
     tasa:[.00015,.00016,.00016,.00017,.00017,.00018,.00018,.00019,.00020,.00020,.00021,.00022,.00023,.00024,.00024,.00025,.00026,.00027,.00028,.00029,.00030],
-    entra:null
+    entra:[0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000]
   };
-  const EFF = [[100,'100% o más',1.30,1.30],[99,'99.0% a 99.9%',1.20,1.00],[98,'98.0% a 98.9%',1.15,0.95],[97,'97.0% a 97.9%',1.10,0.90],
-               [96,'96.0% a 96.9%',1.00,0.85],[95,'95.0% a 95.9%',0.70,0.80],[90,'90.0% a 94.9%',0.40,0.70],[-1,'Menos de 90%',0,0.50]];
+  // Multiplicador de cobranza (igual para los tres niveles)
+  const EFF = [[100,'100% o más',1.30],[99,'99.0% a 99.9%',1.20],[98,'98.0% a 98.9%',1.15],[97,'97.0% a 97.9%',1.10],
+               [96,'96.0% a 96.9%',1.00],[95,'95.0% a 95.9%',0.70],[90,'90.0% a 94.9%',0.40],[-1,'Menos de 90%',0]];
   const effRow = p => EFF.findIndex(r => p >= r[0]);
-  const AF = [[1,1,200,0],[2,3,800,0],[4,6,5500,1000],[7,9,8000,2000],[10,12,11000,3000],[13,15,15000,4000],[16,18,17000,5000],
-              [19,21,20000,6000],[22,24,25000,7000],[25,27,28000,8000],[28,30,31000,9000],[31,Infinity,35000,10000]];
-  const afTramo = n => AF.find(t => n >= t[0] && n <= t[1]) || null;
-  const afLabel = t => t[1] === Infinity ? t[0] + ' o más' : (t[0] === t[1] ? String(t[0]) : t[0] + ' a ' + t[1]);
+  // Pago por afiliación: [mínimo, máximo, pago, bono de entrada]
+  const AF_EJ = [[1,1,200,0],[2,3,800,0],[4,6,2000,1000],[7,9,4200,2000],[10,12,7000,3000],[13,15,10500,4000],[16,18,14500,5000],
+                 [19,21,19000,6000],[22,24,24000,7000],[25,27,30000,8000],[28,30,35000,9000],[31,Infinity,40000,10000]];
+  const AF_GE = [[1,4,0,0],[5,10,200,0],[11,20,750,0],[21,30,1500,1000],[31,40,3000,2000],[41,50,6000,3000],[51,60,10000,4000],
+                 [61,70,15000,5000],[71,80,17500,6000],[81,90,24000,7000],[91,100,28000,8000],[101,Infinity,35000,9000]];
+  const AF_RE = [[1,100,0,0],[101,200,1000,0],[201,300,5000,1000],[301,400,9000,2000],[401,500,14000,3000],[501,600,20000,4000],
+                 [601,700,30000,5000],[701,Infinity,50000,6000]];
+  const afTramo = (T, n) => T.find(t => n >= t[0] && n <= t[1]) || null;
+  const afLabel = t => t[1] === Infinity ? num(t[0]) + ' o más' : (t[0] === t[1] ? String(t[0]) : num(t[0]) + ' a ' + num(t[1]));
 
   const ROLES = {
-    ej:{tbl:EJ, title:'Tus números del mes', col:'Colocación del mes', colSmall:'monto entregado', colMax:20e6, colStep:50000,
+    ej:{tbl:EJ, af:AF_EJ, title:'Tus números del mes', col:'Colocación del mes', colSmall:'monto entregado', colMax:20e6, colStep:50000,
+        afTxt:'Afiliaciones del mes', afSmall:'número de aliadas nuevas', afMax:35,
         hero:'Pago estimado del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar)',
-        sample:{col:4500000,cob:98,afN:8,afP:100,rent:25,aud:96}},
-    ge:{tbl:GE, title:'Los números de tu sucursal', col:'Colocación de la sucursal', colSmall:'suma de tus ejecutivos en el mes', colMax:40e6, colStep:100000,
+        sample:{col:4500000,cob:98,afN:8,rent:25,aud:96}},
+    ge:{tbl:GE, af:AF_GE, title:'Los números de tu sucursal', col:'Colocación de la sucursal', colSmall:'suma de tus ejecutivos en el mes', colMax:40e6, colStep:100000,
+        afTxt:'Afiliaciones de la sucursal', afSmall:'suma de tus ejecutivos en el mes', afMax:120,
         hero:'Pago estimado del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (salto al entrar)',
-        sample:{col:10500000,cob:97,afN:8,afP:100,rent:25,aud:96}},
-    re:{tbl:RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
-        hero:'Pago estimado del trimestre', firstTxt:'',
-        sample:{col:125000000,cob:99,afN:8,afP:99,rent:16,aud:96}}
+        sample:{col:10500000,cob:97,afN:25,rent:25,aud:96}},
+    re:{tbl:RE, af:AF_RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
+        afTxt:'Afiliaciones de la región', afSmall:'suma del trimestre', afMax:800,
+        hero:'Pago estimado del trimestre', firstTxt:'Es la primera vez que la región llega a este bloque (salto al entrar)',
+        sample:{col:125000000,cob:99,afN:250,rent:16,aud:96}}
   };
 
   const FORMULA = {
-    ej:[['Base del bloque','según tu colocación',0],'+',['Tasa × excedente','lo que pasas del inicio',0],'×',['Cobranza','0 a 1.30x',1],'×',['Meta sucursal','1.10x si llega al 100%',1],'+',['Afiliación','pago por tramo',1]],
-    ge:[['Base del bloque','colocación de la sucursal',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'×',['Afiliación','0.50 a 1.30x',1],'→',['Candados','rentabilidad y auditoría',0]],
-    re:[['Base del bloque','colocación del trimestre',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'×',['Afiliación','0.50 a 1.30x',1],'→',['Candados','rentabilidad y auditoría',0]]
+    ej:[['Base del bloque','según tu colocación',0],'+',['Tasa × excedente','lo que pasas del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'+',['Bonos de entrada','bloque y tramo, una vez',0]],
+    ge:[['Base del bloque','colocación de la sucursal',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'→',['Candados','rentabilidad y auditoría',0]],
+    re:[['Base del bloque','colocación del trimestre',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'→',['Candados','rentabilidad y auditoría',0]]
   };
   let role = 'ej';
   try { const r = localStorage.getItem('captavale-sim-role'); if (r && ROLES[r]) role = r; } catch(e){}
   const $ = id => document.getElementById(id);
-  const pairs = [['colRange','colNum'],['cobRange','cobNum'],['afNRange','afNNum'],['afPRange','afPNum'],['rentRange','rentNum'],['audRange','audNum']];
+  const pairs = [['colRange','colNum'],['cobRange','cobNum'],['afNRange','afNNum'],['rentRange','rentNum'],['audRange','audNum']];
 
-  function blockOf(t, amt){
-    let i = Math.min(Math.floor(Math.max(amt,0) / t.step), t.base.length - 1);
-    return i;
-  }
-  function colPay(t, i, amt){ return t.base[i] + t.tasa[i] * (Math.max(amt,0) - i * t.step); }
+  function blockOf(t, amt){ return Math.min(Math.floor(Math.max(amt,0) / t.step), t.base.length - 1); }
 
   function setRole(r){
     role = r;
@@ -174,31 +176,25 @@
     $('formTitle').textContent = R.title;
     $('colLabel').textContent = R.col; $('colSmall').textContent = R.colSmall;
     $('colRange').max = R.colMax; $('colRange').step = R.colStep; $('colRange').min = 0;
+    $('afLabelTxt').textContent = R.afTxt; $('afSmall').textContent = R.afSmall; $('afNRange').max = R.afMax;
     $('heroLbl').textContent = R.hero;
-    $('afNField').hidden = r !== 'ej';
-    $('sucWrap').hidden = r !== 'ej';
     $('ftoks').innerHTML = FORMULA[r].map(x => typeof x === 'string' ? `<span class="op">${x}</span>` : `<div class="tok${x[2]?' l':''}">${x[0]}<small>${x[1]}</small></div>`).join('');
-    $('afPField').hidden = r === 'ej';
     $('rentField').hidden = r === 'ej';
     $('audField').hidden = r === 'ej';
-    $('firstAfWrap').hidden = r !== 'ej';
     $('oldWrap').hidden = r !== 'ge';
-    $('firstBlockWrap').hidden = r === 're';
     $('firstBlockTxt').textContent = R.firstTxt;
     const s = R.sample;
-    setVal('col', s.col); setVal('cob', s.cob); setVal('afN', s.afN); setVal('afP', s.afP); setVal('rent', s.rent); setVal('aud', s.aud);
-    $('firstBlock').checked = false; $('firstAf').checked = false; $('sucMeta').checked = false;
+    setVal('col', s.col); setVal('cob', s.cob); setVal('afN', s.afN); setVal('rent', s.rent); setVal('aud', s.aud);
+    $('firstBlock').checked = false; $('firstAf').checked = false;
     $('formHint').textContent = 'Datos de ejemplo de la propuesta. Cámbialos por los tuyos.';
     calc();
   }
   function setVal(k, v){
-    const rng = $(k+'Range'), num = $(k+'Num');
-    rng.value = v;
-    num.value = k === 'col' ? Math.round(v).toLocaleString('en-US') : String(v);
+    $(k+'Range').value = v;
+    $(k+'Num').value = (k === 'col' || k === 'afN') ? Math.round(v).toLocaleString('en-US') : String(v);
   }
   function getVal(k){
-    const raw = String($(k+'Num').value).replace(/[^0-9.]/g,'');
-    const v = parseFloat(raw);
+    const v = parseFloat(String($(k+'Num').value).replace(/[^0-9.]/g,''));
     return isNaN(v) ? 0 : v;
   }
 
@@ -219,56 +215,52 @@
                    'Pide referidas a tus mejores aliadas: una aliada que paga bien recomienda a otras igual.',
                    'Mide tu avance cada semana; no esperes al día 30.'];
   const TIPS_GE_AF = ['Revisa cada semana el avance de afiliación de cada ejecutivo.',
-                      'Acompaña a quien lleva menos de 4 afiliaciones: con 4 al mes ya está en el 10% superior.',
+                      'Acompaña a quien lleva menos de 4 afiliaciones: desde 4 al mes cada ejecutivo cobra $2,000 por afiliación.',
                       'Activa a las aliadas nuevas en sus primeros 30 días.'];
+  const TIPS_RE_AF = ['Pide a cada gerente su plan semanal de afiliación.',
+                      'Compara sucursales cada semana y apoya a las que van abajo del ritmo.',
+                      'Recuerda que la campaña Suma aliadas premia a las ejecutivas: úsala para empujar el trimestre.'];
 
   function calc(){
-    const R = ROLES[role], t = R.tbl;
-    const col = getVal('col'), cob = getVal('cob'), afN = Math.floor(getVal('afN')), smul = (role === 'ej' && $('sucMeta').checked) ? 1.10 : 1.00, afP = getVal('afP'), rent = getVal('rent'), aud = getVal('aud');
+    const R = ROLES[role], t = R.tbl, AF = R.af;
+    const col = getVal('col'), cob = getVal('cob'), afN = Math.floor(getVal('afN')), rent = getVal('rent'), aud = getVal('aud');
     const i = blockOf(t, col), code = t.code + (i+1);
     const desde = i * t.step, extraAmt = Math.max(col - desde, 0);
     const base = t.base[i], extra = t.tasa[i] * extraAmt, sub = base + extra;
     const ci = effRow(cob), cm = EFF[ci][2];
-    const ai = effRow(afP), am = EFF[ai][3];
-    const lines = [];
-    const tips = [];
-    const pills = [];
-    let total = 0, candadosOk = true;
+    const lines = [], tips = [], pills = [];
 
     lines.push(['Bloque alcanzado', code + ' · desde ' + fmtM(desde)]);
     lines.push(['Incentivo base ' + code, fmt(base)]);
     lines.push(['+ tasa ' + (t.tasa[i]*100).toFixed(t.tasa[i] < .001 ? 3 : 2) + '% × ' + fmt(extraAmt), fmt(extra)]);
     lines.push(['Subtotal por colocación', fmt(sub), 'b']);
     lines.push(['× cobranza ' + pct(cob/100) + '%', cm.toFixed(2) + 'x']);
+    const colPart = Math.round(sub * cm * 100) / 100;
+    lines.push(['= colocación con cobranza', fmt(colPart)]);
 
-    let afPay = 0, tr = null, entra = 0, bonoAf = 0;
-    if (role === 'ej'){
-      const colPart = Math.round(sub * cm * smul * 100) / 100;
-      tr = afTramo(afN); afPay = tr ? tr[2] : 0;
-      lines.push(['× meta de afiliación de la sucursal', smul.toFixed(2) + 'x']);
-      lines.push(['= colocación con multiplicadores', fmt(colPart)]);
-      lines.push(['+ ' + afN + ' afiliaciones' + (tr ? ' (tramo ' + afLabel(tr) + ')' : ''), fmt(afPay)]);
-      if ($('firstBlock').checked){ entra = t.entra[i]; lines.push(['+ incentivo al entrar a ' + code + ' (una vez)', fmt(entra)]); }
-      if ($('firstAf').checked && tr && tr[3]){ bonoAf = tr[3]; lines.push(['+ bono de entrada al tramo (una vez)', fmt(bonoAf)]); }
-      total = colPart + afPay + entra + bonoAf;
-    } else {
-      lines.push(['× afiliación ' + pct(afP/100) + '% de la meta', am.toFixed(2) + 'x']);
+    const tr = afTramo(AF, afN), afPay = tr ? tr[2] : 0;
+    lines.push(['+ ' + num(afN) + ' afiliaciones' + (tr ? ' (tramo ' + afLabel(tr) + ')' : ''), fmt(afPay)]);
+    let entra = 0, bonoAf = 0;
+    if ($('firstBlock').checked && t.entra[i]){ entra = t.entra[i]; lines.push(['+ ' + (role==='ej'?'incentivo':'salto') + ' al entrar a ' + code + ' (una vez)', fmt(entra)]); }
+    if ($('firstAf').checked && tr && tr[3]){ bonoAf = tr[3]; lines.push(['+ bono de entrada al tramo (una vez)', fmt(bonoAf)]); }
+    const gross = colPart + afPay + entra + bonoAf;
+
+    let candadosOk = true, total = gross;
+    if (role !== 'ej'){
       const needRent = role === 're' || $('oldBranch').checked;
       const rentOk = !needRent || rent >= 15, audOk = aud >= 95;
       candadosOk = rentOk && audOk;
       lines.push(['Candados (rentabilidad ' + pct(rent/100) + '%, auditoría ' + pct(aud/100) + '%)', candadosOk ? 'Cumple' : 'No cumple', candadosOk ? '' : 'm']);
-      let p = sub * cm * am;
-      if (role === 'ge' && $('firstBlock').checked && t.entra[i]){ entra = t.entra[i]; lines.push(['+ salto al entrar a ' + code + ' (una vez)', fmt(entra)]); }
-      total = candadosOk ? p + entra : 0;
+      total = candadosOk ? gross : 0;
       if (!candadosOk){
-        tips.push(['bad', 'Sin candados no hay pago', (!rentOk ? 'La rentabilidad está en ' + pct(rent/100) + '% y el mínimo es 15%. ' : '') + (!audOk ? 'La auditoría está en ' + pct(aud/100) + '% y el mínimo es 95%. ' : '') + 'Con los candados cumplidos cobrarías ' + fmt(p + entra) + '.',
-          ['Revisa gastos y castigos de cartera de la sucursal cada semana.', 'Prepara la auditoría con la lista de puntos revisados y corrige los pendientes antes de la visita.']]);
+        tips.push(['bad', 'Sin candados no hay pago', (!rentOk ? 'La rentabilidad está en ' + pct(rent/100) + '% y el mínimo es 15%. ' : '') + (!audOk ? 'La auditoría está en ' + pct(aud/100) + '% y el mínimo es 95%. ' : '') + 'Con los candados cumplidos cobrarías ' + fmt(gross) + '.',
+          ['Revisa gastos y castigos de cartera ' + (role==='ge'?'de la sucursal':'de cada sucursal') + ' cada semana.', 'Prepara la auditoría con la lista de puntos revisados y corrige los pendientes antes de la visita.']]);
       }
     }
 
     $('total').textContent = fmt(total);
     $('heroSub').textContent = role === 're'
-      ? 'Se paga al cierre del trimestre. Bono anual de 3 meses si la región supera 20% de rentabilidad (con EBITDA Capta al 85%).'
+      ? 'Se paga al cierre del trimestre. Bono anual de 3 meses de sueldo si la región supera 20% de rentabilidad (con EBITDA Capta cumpliendo al 85%).'
       : (role === 'ge' ? 'Si tienes varias sucursales, cobras la suma de todas.' : 'Se paga el día 20 del mes siguiente.');
     lines.push(['Pago estimado', fmt(total), 't']);
     $('breakdown').innerHTML = lines.map(l => `<div class="line${l[2]==='t'?' total':''}${l[2]==='m'?' muted':''}"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('');
@@ -276,8 +268,8 @@
     // pills
     pills.push(['Bloque ' + code, 'ok']);
     pills.push(['Cobranza ' + cm.toFixed(2) + 'x', cm >= 1 ? 'ok' : (cm > 0 ? 'warn' : 'bad')]);
-    if (role === 'ej') pills.push([afN + ' afiliaciones', afN >= 4 ? 'ok' : 'warn']);
-    else { pills.push(['Afiliación ' + am.toFixed(2) + 'x', am >= 1 ? 'ok' : (am > 0 ? 'warn' : 'bad')]); pills.push([candadosOk ? 'Candados OK' : 'Candados sin cumplir', candadosOk ? 'ok' : 'bad']); }
+    pills.push([num(afN) + ' afiliaciones · ' + fmt(afPay), afPay > 0 ? 'ok' : 'warn']);
+    if (role !== 'ej') pills.push([candadosOk ? 'Candados OK' : 'Candados sin cumplir', candadosOk ? 'ok' : 'bad']);
     $('pills').innerHTML = pills.map(p => `<span class="pill ${p[1]}">${p[0]}</span>`).join('');
 
     // siguiente bloque
@@ -286,63 +278,54 @@
     $('bar').style.width = Math.max(2, Math.min(100, into*100)) + '%';
     if (last){
       $('nextTxt').innerHTML = 'Estás en el bloque más alto (' + code + '). Cada peso adicional suma ' + (t.tasa[i]*100).toFixed(3) + '% sobre lo que pase de ' + fmtM(desde) + '.';
+      $('barWrap').setAttribute('aria-label', 'Bloque más alto ' + code);
     } else {
       const falta = (i+1) * t.step - col;
-      const nb = t.base[i+1];
-      let nextTotal;
-      if (role === 'ej') nextTotal = nb * cm * smul + afPay;
-      else nextTotal = candadosOk ? nb * cm * am : 0;
-      const gain = nextTotal - (role === 'ej' ? sub*cm*smul + afPay : (candadosOk ? sub*cm*am : 0));
+      const nextCol = t.base[i+1] * cm;
+      const gain = candadosOk ? nextCol - colPart : 0;
+      const nextTotal = candadosOk ? nextCol + afPay : 0;
       $('nextTxt').innerHTML = `Te faltan <b>${fmt(falta)}</b> para llegar a <b>${t.code}${i+2}</b>. Con eso tu pago sería <b>${fmt(nextTotal)}</b> (${gain >= 0 ? '+' : ''}${fmt(gain)})` +
-        (t.entra && t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} ${role==='ej'?'de incentivo al entrar':'de salto al entrar'} la primera vez.` : '.');
+        (t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} ${role==='ej'?'de incentivo al entrar':'de salto al entrar'} la primera vez.` : '.');
       $('barWrap').setAttribute('aria-label', 'Llevas ' + Math.round(into*100) + '% del bloque ' + code);
       if (into >= 0.75) tips.push(['tip', 'Estás muy cerca del siguiente bloque', `Solo te faltan ${fmt(falta)} para ${t.code}${i+2}. Subir de bloque vale más que crecer dentro del bloque.`]);
     }
 
     // tips de cobranza
     if (cob < 90){
-      tips.unshift(['bad', 'Con menos de 90% de cobranza no hay pago por colocación', `Tu cobranza está en ${pct(cob/100)}%. Si llegas a 96%, tu pago por colocación sería ${fmt(sub)}${role==='ej'?'':' antes de afiliación'}.`, TIPS_COB]);
+      tips.unshift(['bad', 'Con menos de 90% de cobranza no hay pago por colocación', `Tu cobranza está en ${pct(cob/100)}%. Si llegas a 96%, tu pago por colocación sería ${fmt(sub)}.`, TIPS_COB]);
     } else if (cob < 96){
-      const at96 = role === 'ej' ? sub * smul + afPay : (candadosOk ? sub * am : 0);
-      tips.unshift(['warn', 'Tu cobranza te está restando', `Con ${pct(cob/100)}% tu colocación se multiplica por ${cm.toFixed(2)}. Llegando a 96% cobrarías ${fmt(at96)} en lugar de ${fmt(total - entra - bonoAf)}.`, TIPS_COB]);
+      tips.unshift(['warn', 'Tu cobranza te está restando', `Con ${pct(cob/100)}% tu colocación se multiplica por ${cm.toFixed(2)}. Llegando a 96% cobrarías ${fmt(sub)} por colocación en lugar de ${fmt(colPart)}.`, TIPS_COB]);
     }
     // tips de afiliación
-    if (role === 'ej'){
-      if (afN < 4){
-        const t4 = sub * cm * smul + 5500;
-        tips.push(['warn', 'Llega a 4 afiliaciones', `Con ${afN} afiliaciones cobras ${fmt(afPay)}. Con 4 cobrarías ${fmt(5500)} y tu pago subiría a ${fmt(t4)}, más ${fmt(1000)} de bono la primera vez. Con 4 al mes ya estás en el 10% superior.`, TIPS_AF]);
-      } else {
-        const nt = AF[AF.indexOf(tr) + 1];
-        if (nt) tips.push(['tip', 'Siguiente tramo de afiliación', `Con ${nt[0]} afiliaciones pasas al tramo ${afLabel(nt)}: ${fmt(nt[2])} en lugar de ${fmt(afPay)}, más ${fmt(nt[3])} de bono la primera vez.`]);
-      }
-    } else if (afP < 100){
-      const full = candadosOk ? sub * cm * 1.30 : 0;
-      tips.push(['warn', 'Llega al 100% de la meta de afiliación', `Con ${pct(afP/100)}% tu pago se multiplica por ${am.toFixed(2)}. Con 100% o más sería × 1.30: ${fmt(full + entra)}.`, role === 'ge' ? TIPS_GE_AF : TIPS_GE_AF.concat(['Pide a cada gerente su plan semanal de afiliación.'])]);
+    const ix = tr ? AF.indexOf(tr) : -1;
+    let nt = AF[ix + 1];
+    while (nt && nt[2] === 0) nt = AF[AF.indexOf(nt) + 1];
+    const tipList = role === 'ej' ? TIPS_AF : (role === 'ge' ? TIPS_GE_AF : TIPS_RE_AF);
+    if (nt){
+      const faltan = nt[0] - afN;
+      const kind = afPay === 0 || (role === 'ej' && afN < 4) ? 'warn' : 'tip';
+      const head = afPay === 0 ? 'Empieza a cobrar por afiliación' : 'Siguiente tramo de afiliación';
+      tips.push([kind, head, `Con ${num(faltan)} ${faltan===1?'afiliación':'afiliaciones'} más (${num(nt[0])} en total) pasas al tramo ${afLabel(nt)}: ${fmt(nt[2])} en lugar de ${fmt(afPay)}${nt[3] ? ', más ' + fmt(nt[3]) + ' de bono la primera vez' : ''}.`, kind === 'warn' ? tipList : null]);
     }
     if (!tips.length) tips.push(['ok', 'Vas muy bien', 'Cobranza y afiliación están en verde. Mantén la cartera sana y busca el siguiente bloque.']);
     $('tips').innerHTML = tips.map(x => tipHTML(x[0], x[1], x[2], x[3])).join('');
 
-    // tabla de multiplicadores
-    const showAf = role !== 'ej';
-    $('multHint').textContent = showAf ? 'Cobranza y afiliación multiplican tu pago por colocación.' : 'La cobranza multiplica tu pago por colocación. La afiliación se paga aparte por tramos.';
-    let h = '<thead><tr><th>Efectividad</th><th>Cobranza</th>' + (showAf ? '<th>Afiliación</th>' : '') + '</tr></thead><tbody>';
-    EFF.forEach((r, k) => { h += `<tr class="${k===ci?'on':''}"><td>${r[1]}</td><td>${r[2].toFixed(2)}x</td>${showAf?`<td${k===ai?' style="font-weight:700"':''}>${r[3].toFixed(2)}x</td>`:''}</tr>`; });
-    if (!showAf){
-      h += '</tbody><thead><tr><th>Afiliaciones</th><th>Pago</th></tr></thead><tbody>';
-      AF.forEach(a => { h += `<tr class="${a===tr?'on':''}"><td>${afLabel(a)}</td><td>${fmt(a[2])}${a[3]?' · bono '+fmt(a[3]):''}</td></tr>`; });
-    }
+    // tablas
+    $('multHint').textContent = 'La cobranza multiplica tu pago por colocación. La afiliación se paga aparte por tramos' + (role === 'ej' ? '.' : ' (' + (role === 'ge' ? 'afiliaciones de la sucursal en el mes' : 'afiliaciones de la región en el trimestre') + ').');
+    let h = '<thead><tr><th>Efectividad de cobranza</th><th>Multiplicador</th></tr></thead><tbody>';
+    EFF.forEach((r, k) => { h += `<tr class="${k===ci?'on':''}"><td>${r[1]}</td><td>${r[2].toFixed(2)}x</td></tr>`; });
+    h += '</tbody><thead><tr><th>Afiliaciones</th><th>Pago · bono de entrada</th></tr></thead><tbody>';
+    AF.forEach(a => { h += `<tr class="${a===tr?'on':''}"><td>${afLabel(a)}</td><td>${fmt(a[2])}${a[3]?' · bono '+fmt(a[3]):''}</td></tr>`; });
     $('mtable').innerHTML = h + '</tbody>';
-
   }
 
-  // enlaces de controles
   pairs.forEach(([r, n]) => {
     const k = r.replace('Range','');
     $(r).addEventListener('input', () => { setVal(k, parseFloat($(r).value)); calc(); });
-    $(n).addEventListener('input', () => { const v = getVal(k); $(r).value = v; calc(); });
+    $(n).addEventListener('input', () => { $(r).value = getVal(k); calc(); });
     $(n).addEventListener('blur', () => setVal(k, getVal(k)));
   });
-  ['firstBlock','firstAf','oldBranch','sucMeta'].forEach(id => $(id).addEventListener('change', calc));
+  ['firstBlock','firstAf','oldBranch'].forEach(id => $(id).addEventListener('change', calc));
   document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
   $('form').addEventListener('submit', e => e.preventDefault());
   setRole(role);

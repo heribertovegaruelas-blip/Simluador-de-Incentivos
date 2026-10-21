@@ -52,12 +52,12 @@ body{margin:0}[hidden]{display:none!important}
     <h1>Suma aliadas a tu red</h1>
     <p>Captura tus afiliaciones válidas de cada mes del trimestre y mira qué días de descanso y qué paquete de premios ganas.</p>
     <div class="formula" aria-label="Cómo se gana"><div class="lbl">CÓMO GANAS</div><div class="ftoks">
-      <div class="tok l">Cada mes: 4+<small>= 1 día de descanso</small></div><span class="op">+</span>
+      <div class="tok l">Cada mes: 6+<small>= 1 día de descanso</small></div><span class="op">+</span>
       <div class="tok">Condición<small>2+ válidas cada mes</small></div><span class="op">→</span>
-      <div class="tok l">Plata 15–20<small>Paquete A</small></div>
-      <div class="tok l">Oro 21–29<small>Paquete B</small></div>
-      <div class="tok l">Platino 30+<small>Paquete C</small></div>
-      <div class="tok">Top 3 nacional<small>mínimo 35 · viaje para dos</small></div>
+      <div class="tok l">Plata 20–25<small>Paquete A</small></div>
+      <div class="tok l">Oro 26–35<small>Paquete B</small></div>
+      <div class="tok l">Platino 36+<small>Paquete C</small></div>
+      <div class="tok">Top 3 nacional<small>mínimo 45 · viaje para dos</small></div>
     </div></div>
   </div>
 </header>
@@ -69,15 +69,15 @@ body{margin:0}[hidden]{display:none!important}
       <p class="hint">Datos de ejemplo. Cámbialos por los tuyos.</p>
       <div class="field">
         <label for="m1Num">Mes 1 <small>afiliaciones válidas</small></label>
-        <div class="row"><input type="range" id="m1Range" min="0" max="20" step="1" aria-label="Mes 1"><input class="num short" id="m1Num" inputmode="numeric"></div>
+        <div class="row"><input type="range" id="m1Range" min="0" max="25" step="1" aria-label="Mes 1"><input class="num short" id="m1Num" inputmode="numeric"></div>
       </div>
       <div class="field">
         <label for="m2Num">Mes 2 <small>afiliaciones válidas</small></label>
-        <div class="row"><input type="range" id="m2Range" min="0" max="20" step="1" aria-label="Mes 2"><input class="num short" id="m2Num" inputmode="numeric"></div>
+        <div class="row"><input type="range" id="m2Range" min="0" max="25" step="1" aria-label="Mes 2"><input class="num short" id="m2Num" inputmode="numeric"></div>
       </div>
       <div class="field">
         <label for="m3Num">Mes 3 <small>afiliaciones válidas</small></label>
-        <div class="row"><input type="range" id="m3Range" min="0" max="20" step="1" aria-label="Mes 3"><input class="num short" id="m3Num" inputmode="numeric"></div>
+        <div class="row"><input type="range" id="m3Range" min="0" max="25" step="1" aria-label="Mes 3"><input class="num short" id="m3Num" inputmode="numeric"></div>
       </div>
       <div class="months" id="months"></div>
     </form>
@@ -93,10 +93,10 @@ body{margin:0}[hidden]{display:none!important}
       <div class="card progress">
         <h2>Tu avance del trimestre</h2>
         <div class="track" role="img" id="track"><i id="fill" style="width:0%"></i>
-          <span class="mark" style="left:37.5%" id="k15">15 · Plata</span>
-          <span class="mark" style="left:52.5%" id="k21">21 · Oro</span>
-          <span class="mark" style="left:75%" id="k30">30 · Platino</span>
-          <span class="mark low" style="left:87.5%" id="k35">35 · Top 3</span>
+          <span class="mark" style="left:40%" id="k20">20 · Plata</span>
+          <span class="mark" style="left:52%" id="k26">26 · Oro</span>
+          <span class="mark" style="left:72%" id="k36">36 · Platino</span>
+          <span class="mark low" style="left:90%" id="k45">45 · Top 3</span>
         </div>
         <p id="nextTxt"></p>
       </div>
@@ -105,9 +105,9 @@ body{margin:0}[hidden]{display:none!important}
         <h2>Catálogo: tú eliges tu premio</h2>
         <p class="hint">Se resalta el paquete que te toca.</p>
         <div class="pkgs">
-          <div class="pkg" id="pA" style="--c:#5F6B78"><div class="L">A</div><small>Plata · 15–20</small><ul><li>AirPods 4</li><li>Kindle (2026)</li><li>Galaxy Buds3 FE</li><li>Monedero electrónico $3,000</li></ul></div>
-          <div class="pkg" id="pB" style="--c:#8C6418"><div class="L">B</div><small>Oro · 21–29</small><ul><li>Apple Watch SE 3</li><li>Kindle Colorsoft</li><li>Galaxy Watch8</li><li>Monedero electrónico $5,000</li></ul></div>
-          <div class="pkg" id="pC" style="--c:#2B3A4A"><div class="L">C</div><small>Platino · 30+</small><ul><li>iPad 11"</li><li>Apple Watch Series 12</li><li>Pantalla Samsung 55" 4K</li><li>Monedero electrónico $7,000</li></ul></div>
+          <div class="pkg" id="pA" style="--c:#5F6B78"><div class="L">A</div><small>Plata · 20–25</small><ul><li>AirPods 4</li><li>Kindle (2026)</li><li>Galaxy Buds3 FE</li><li>Monedero electrónico $3,000</li></ul></div>
+          <div class="pkg" id="pB" style="--c:#8C6418"><div class="L">B</div><small>Oro · 26–35</small><ul><li>Apple Watch SE 3</li><li>Kindle Colorsoft</li><li>Galaxy Watch8</li><li>Monedero electrónico $5,000</li></ul></div>
+          <div class="pkg" id="pC" style="--c:#2B3A4A"><div class="L">C</div><small>Platino · 36+</small><ul><li>iPad 11"</li><li>Apple Watch Series 12</li><li>Pantalla Samsung 55" 4K</li><li>Monedero electrónico $7,000</li></ul></div>
         </div>
       </div>
 
@@ -126,12 +126,12 @@ body{margin:0}[hidden]{display:none!important}
     </section>
   </div>
 </main>
-<footer><div class="wrap">Simulador informativo de la campaña "Suma aliadas a tu red" (presentación ejecutiva del 16/10/2026). Los días de descanso se usan en enero–febrero de 2027 con autorización de tu gerente.</div></footer>
+<footer><div class="wrap">Simulador informativo de la campaña "Suma aliadas a tu red" (presentación ejecutiva, actualización del 21/10/2026). Los días de descanso se usan en enero–febrero de 2027 con autorización de tu gerente.</div></footer>
 
 <script>
 (function(){
   const $ = id => document.getElementById(id);
-  const sample = {m1:5, m2:8, m3:9};
+  const sample = {m1:6, m2:9, m3:8};
   const ICON = {
     tip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>',
     warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
@@ -140,45 +140,46 @@ body{margin:0}[hidden]{display:none!important}
   const tip = (k, h, p) => `<div class="tip ${k==='ok'||k==='tip'?'':k}">${k==='ok'?ICON.ok:(k==='tip'?ICON.tip:ICON.warn)}<div><h3>${h}</h3><p>${p}</p></div></div>`;
   const get = k => { const v = parseInt(String($(k+'Num').value).replace(/[^0-9]/g,''), 10); return isNaN(v) ? 0 : Math.max(0, v); };
   const set = (k, v) => { $(k+'Range').value = v; $(k+'Num').value = v; };
-  const TIERS = [['C','Paquete C · Platino',30],['B','Paquete B · Oro',21],['A','Paquete A · Plata',15]];
+  const TIERS = [['C','Paquete C · Platino',36],['B','Paquete B · Oro',26],['A','Paquete A · Plata',20]];
+  const DIA = 6, TOP = 45;
 
   function calc(){
     const m = [get('m1'), get('m2'), get('m3')];
     const total = m.reduce((a,b) => a+b, 0);
     const cond = m.every(x => x >= 2);
-    const dias = Math.min(3, m.filter(x => x >= 4).length);
+    const dias = Math.min(3, m.filter(x => x >= DIA).length);
     const tier = cond ? TIERS.find(t => total >= t[2]) : null;
 
     $('months').innerHTML = m.map((x, i) => `<div class="month"><b>MES ${i+1}</b><span class="n">${x}</span>` +
-      `<span class="tag ${x >= 4 ? 'ok' : 'no'}">${x >= 4 ? '1 día de descanso' : 'Faltan ' + (4-x) + ' para el día'}</span>` +
+      `<span class="tag ${x >= DIA ? 'ok' : 'no'}">${x >= DIA ? '1 día de descanso' : 'Faltan ' + (DIA-x) + ' para el día'}</span>` +
       `<span class="tag ${x >= 2 ? 'ok' : 'bad'}">${x >= 2 ? 'Condición cumplida' : 'Mínimo 2 válidas'}</span></div>`).join('');
 
     $('prize').textContent = tier ? tier[1] : 'Aún sin premio';
-    $('heroSub').textContent = tier ? 'Un solo premio: el más alto que ganes. Eliges 1 opción de tu paquete.' : (cond ? 'Necesitas 15 afiliaciones válidas en el trimestre para el Paquete A.' : 'Para el premio necesitas al menos 2 afiliaciones válidas en cada mes.');
-    $('pills').innerHTML = [[total + ' afiliaciones en el trimestre', total >= 15 ? 'ok' : 'warn'],
+    $('heroSub').textContent = tier ? 'Un solo premio: el más alto que ganes. Eliges 1 opción de tu paquete.' : (cond ? 'Necesitas 20 afiliaciones válidas en el trimestre para el Paquete A.' : 'Para el premio necesitas al menos 2 afiliaciones válidas en cada mes.');
+    $('pills').innerHTML = [[total + ' afiliaciones en el trimestre', total >= 20 ? 'ok' : 'warn'],
       [dias + ' de 3 días de descanso', dias ? 'ok' : 'warn'],
       [cond ? 'Condición mensual OK' : 'Falta condición mensual', cond ? 'ok' : 'bad'],
-      [total >= 35 ? 'Compites por el viaje' : 'Viaje: mínimo 35', total >= 35 ? 'ok' : '']]
+      [total >= TOP ? 'Compites por el viaje' : 'Viaje: mínimo ' + TOP, total >= TOP ? 'ok' : '']]
       .map(p => `<span class="pill ${p[1]}">${p[0]}</span>`).join('');
 
-    $('fill').style.width = Math.min(100, total / 40 * 100) + '%';
-    [['k15',15],['k21',21],['k30',30],['k35',35]].forEach(([id, v]) => $(id).classList.toggle('hit', total >= v));
+    $('fill').style.width = Math.min(100, total / 50 * 100) + '%';
+    [['k20',20],['k26',26],['k36',36],['k45',45]].forEach(([id, v]) => $(id).classList.toggle('hit', total >= v));
     $('track').setAttribute('aria-label', 'Llevas ' + total + ' afiliaciones válidas en el trimestre');
     ['A','B','C'].forEach(k => $('p'+k).classList.toggle('on', !!tier && tier[0] === k));
 
-    const goals = [15, 21, 30, 35];
+    const goals = [20, 26, 36, 45];
     const next = goals.find(g => total < g);
-    const names = {15:'el Paquete A (Plata)', 21:'el Paquete B (Oro)', 30:'el Paquete C (Platino)', 35:'competir por el viaje del Top 3 nacional'};
+    const names = {20:'el Paquete A (Plata)', 26:'el Paquete B (Oro)', 36:'el Paquete C (Platino)', 45:'competir por el viaje del Top 3 nacional'};
     const af = n => n + (n === 1 ? ' afiliación válida' : ' afiliaciones válidas');
     const al = s => s.replace(/^el /, 'al ');
-    $('nextTxt').innerHTML = next ? `Te ${next - total === 1 ? 'falta' : 'faltan'} <b>${af(next - total)}</b> para ${names[next]}.` : 'Ya superas las 35 afiliaciones: estás compitiendo por el <b>viaje para dos</b> con las mejores del país.';
+    $('nextTxt').innerHTML = next ? `Te ${next - total === 1 ? 'falta' : 'faltan'} <b>${af(next - total)}</b> para ${names[next]}.` : 'Ya llegas a 45 afiliaciones: estás compitiendo por el <b>viaje para dos</b> con las mejores del país.';
 
     const tips = [];
     m.forEach((x, i) => { if (x < 2) tips.push(['bad', `Mes ${i+1}: te falta la condición`, `Necesitas al menos 2 afiliaciones válidas en cada mes; en el mes ${i+1} llevas ${x}. Sin esto no hay premio del trimestre.`]); });
-    if (dias < 3) tips.push(['warn', 'Gana tus días de descanso', `Cada mes con 4 o más afiliaciones válidas te da 1 día. Llevas ${dias} de 3.`]);
-    if (next && next <= 35) tips.push(['tip', 'Tu siguiente meta', `Con ${next - total} más ${next === 35 ? 'puedes ' + names[next] : 'llegas ' + al(names[next])}. Busca en tiendas, venta por catálogo y emprendedoras de tu zona, y pide referidas a tus mejores aliadas.`]);
+    if (dias < 3) tips.push(['warn', 'Gana tus días de descanso', `Cada mes con 6 o más afiliaciones válidas te da 1 día. Llevas ${dias} de 3.`]);
+    if (next && next <= TOP) tips.push(['tip', 'Tu siguiente meta', `Con ${next - total} más ${next === TOP ? 'puedes ' + names[next] : 'llegas ' + al(names[next])}. Busca en tiendas, venta por catálogo y emprendedoras de tu zona, y pide referidas a tus mejores aliadas.`]);
     tips.push(['tip', 'Afilia con calidad', 'Solo cuentan las afiliaciones válidas: haz la misma revisión que al colocar y acompaña a la aliada en sus primeros 30 días.']);
-    if (tier && tier[0] === 'C' && total >= 35) tips.unshift(['ok', '¡Vas por todo!', 'Ya tienes el Paquete C y compites por el viaje. Sigue sumando: el Top 3 se define por quién afilia más.']);
+    if (tier && tier[0] === 'C' && total >= TOP) tips.unshift(['ok', '¡Vas por todo!', 'Ya tienes el Paquete C y compites por el viaje. Sigue sumando: el Top 3 se define por quién afilia más.']);
     $('tips').innerHTML = tips.map(t => tip(...t)).join('');
   }
 
