@@ -125,7 +125,9 @@
     code:'B', step:15e6, period:'trimestre',
     base:[5000,7750,11150,15050,19600,24650,30350,36550,43400,50900,58900,67550,76850,86800,97400,108500,120250,132650,145700,159400,173750],
     tasa:[.00015,.00016,.00016,.00017,.00017,.00018,.00018,.00019,.00020,.00020,.00021,.00022,.00023,.00024,.00024,.00025,.00026,.00027,.00028,.00029,.00030],
-    entra:[0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000]
+    // El salto de la tabla regional ($0 a $10,000) ya está incluido en la base de cada bloque: no se paga aparte.
+    salto:[0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000],
+    entra:null
   };
   // Multiplicador de cobranza (igual para los tres niveles)
   const EFF = [[100,'100% o más',1.30],[99,'99.0% a 99.9%',1.20],[98,'98.0% a 98.9%',1.15],[97,'97.0% a 97.9%',1.10],
@@ -152,7 +154,7 @@
         sample:{col:10500000,cob:97,afN:25,rent:25,aud:96}},
     re:{tbl:RE, af:AF_RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
         afTxt:'Afiliaciones de la región', afSmall:'suma del trimestre', afMax:800,
-        hero:'Pago estimado del trimestre', firstTxt:'Es la primera vez que la región llega a este bloque (salto al entrar)',
+        hero:'Pago estimado del trimestre', firstTxt:'',
         sample:{col:125000000,cob:99,afN:250,rent:16,aud:96}}
   };
 
@@ -182,6 +184,7 @@
     $('rentField').hidden = r === 'ej';
     $('audField').hidden = r === 'ej';
     $('oldWrap').hidden = r !== 'ge';
+    $('firstBlockWrap').hidden = r === 're';
     $('firstBlockTxt').textContent = R.firstTxt;
     const s = R.sample;
     setVal('col', s.col); setVal('cob', s.cob); setVal('afN', s.afN); setVal('rent', s.rent); setVal('aud', s.aud);
@@ -241,7 +244,7 @@
     const tr = afTramo(AF, afN), afPay = tr ? tr[2] : 0;
     lines.push(['+ ' + num(afN) + ' afiliaciones' + (tr ? ' (tramo ' + afLabel(tr) + ')' : ''), fmt(afPay)]);
     let entra = 0, bonoAf = 0;
-    if ($('firstBlock').checked && t.entra[i]){ entra = t.entra[i]; lines.push(['+ ' + (role==='ej'?'incentivo':'salto') + ' al entrar a ' + code + ' (una vez)', fmt(entra)]); }
+    if ($('firstBlock').checked && t.entra && t.entra[i]){ entra = t.entra[i]; lines.push(['+ ' + (role==='ej'?'incentivo':'salto') + ' al entrar a ' + code + ' (una vez)', fmt(entra)]); }
     if ($('firstAf').checked && tr && tr[3]){ bonoAf = tr[3]; lines.push(['+ bono de entrada al tramo (una vez)', fmt(bonoAf)]); }
     const gross = colPart + afPay + entra + bonoAf;
 
@@ -285,7 +288,8 @@
       const gain = candadosOk ? nextCol - colPart : 0;
       const nextTotal = candadosOk ? nextCol + afPay : 0;
       $('nextTxt').innerHTML = `Te faltan <b>${fmt(falta)}</b> para llegar a <b>${t.code}${i+2}</b>. Con eso tu pago sería <b>${fmt(nextTotal)}</b> (${gain >= 0 ? '+' : ''}${fmt(gain)})` +
-        (t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} ${role==='ej'?'de incentivo al entrar':'de salto al entrar'} la primera vez.` : '.');
+        (t.entra && t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} ${role==='ej'?'de incentivo al entrar':'de salto al entrar'} la primera vez.` : '.')
+        + (t.salto ? ` La base de ${t.code}${i+2} ya incluye un salto de ${fmt(t.salto[i+1])}.` : '');
       $('barWrap').setAttribute('aria-label', 'Llevas ' + Math.round(into*100) + '% del bloque ' + code);
       if (into >= 0.75) tips.push(['tip', 'Estás muy cerca del siguiente bloque', `Solo te faltan ${fmt(falta)} para ${t.code}${i+2}. Subir de bloque vale más que crecer dentro del bloque.`]);
     }

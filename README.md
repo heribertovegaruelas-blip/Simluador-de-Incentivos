@@ -18,7 +18,7 @@ Las tablas de bloques, cobranza y tramos de afiliación están al inicio del `<s
 
 ## Versión actual
 Presentación ejecutiva de octubre 2026 (actualización del 21/10/2026):
-- Bloques C1–C16 (ejecutivo), G1–G16 (gerente de sucursal) y B1–B21 (regional, trimestral, ahora con salto al entrar de $500 a $10,000).
+- Bloques C1–C16 (ejecutivo), G1–G16 (gerente de sucursal) y B1–B21 (regional, trimestral; el salto de $500 a $10,000 ya está incluido en la base de cada bloque).
 - Cobranza multiplica la colocación en los tres niveles (0 a 1.30x).
 - Afiliación se paga por tramos en los tres niveles, con bono de entrada la primera vez:
   - Ejecutivo: de $200 (1 afiliación) a $40,000 (31 o más).
