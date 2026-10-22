@@ -66,7 +66,7 @@
 
     <section class="result" aria-live="polite">
       <div class="hero">
-        <span class="lbl" id="heroLbl">Pago estimado del mes</span>
+        <span class="lbl" id="heroLbl">Estimado a pagar del mes</span>
         <div class="totalbox"><span id="totLbl">Total</span><span class="big" id="total">$0</span></div>
         <span class="sub" id="heroSub"></span>
         <div class="pills" id="pills"></div>
@@ -103,6 +103,9 @@
 <script>
 (function(){
   const fmt = v => '$' + Math.round(v).toLocaleString('en-US');
+  // Ejecutivo y Gerente de sucursal: el total estimado se divide entre DIVISOR para obtener el estimado a pagar.
+  // El Gerente regional no lleva esta división.
+  const DIVISOR = 1.09;
   const fmtM = v => '$' + (v/1e6).toLocaleString('en-US',{maximumFractionDigits:2}) + ' M';
   const pct = v => (Math.round(v*1000)/10).toString().replace(/\.0$/,'') ;
   const num = n => n.toLocaleString('en-US');
@@ -146,11 +149,11 @@
   const ROLES = {
     ej:{tbl:EJ, af:AF_EJ, title:'Tus números del mes', col:'Colocación del mes', colSmall:'monto entregado', colMax:20e6, colStep:50000,
         afTxt:'Afiliaciones del mes', afSmall:'número de aliadas nuevas', afMax:35,
-        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar, única ocasión)',
+        hero:'Estimado a pagar del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar, única ocasión)',
         sample:{col:4500000,cob:98,afN:8,rent:25,aud:96}},
     ge:{tbl:GE, af:AF_GE, title:'Los números de tu sucursal', col:'Colocación de la sucursal', colSmall:'suma de tus ejecutivos en el mes', colMax:40e6, colStep:100000,
         afTxt:'Afiliaciones de la sucursal', afSmall:'suma de tus ejecutivos en el mes', afMax:120,
-        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (incentivo al entrar, única ocasión)',
+        hero:'Estimado a pagar del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (incentivo al entrar, única ocasión)',
         sample:{col:10500000,cob:97,afN:25,rent:25,aud:96}},
     re:{tbl:RE, af:AF_RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
         afTxt:'Afiliaciones de la región', afSmall:'suma del trimestre', afMax:800,
@@ -261,11 +264,18 @@
       }
     }
 
-    $('total').textContent = fmt(total);
+    const div = role === 're' ? 1 : DIVISOR;
+    const aPagar = total / div;
+    $('total').textContent = fmt(aPagar);
     $('heroSub').textContent = role === 're'
       ? 'Se paga al cierre del trimestre. Bono anual de 3 meses de sueldo si la región supera 20% de rentabilidad (con EBITDA Capta cumpliendo al 85%).'
       : (role === 'ge' ? 'Si tienes varias sucursales, cobras la suma de todas.' : 'Se paga el día 20 del mes siguiente.');
-    lines.push(['Pago estimado', fmt(total), 't']);
+    if (role === 're') {
+      lines.push(['Pago estimado', fmt(total), 't']);
+    } else {
+      lines.push(['Total estimado', fmt(total), 'b']);
+      lines.push(['Estimado a pagar (total estimado ÷ ' + DIVISOR.toFixed(2) + ')', fmt(aPagar), 't']);
+    }
     $('breakdown').innerHTML = lines.map(l => `<div class="line${l[2]==='t'?' total':''}${l[2]==='m'?' muted':''}"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('');
 
     // pills
@@ -287,7 +297,7 @@
       const nextCol = t.base[i+1] * cm;
       const gain = candadosOk ? nextCol - colPart : 0;
       const nextTotal = candadosOk ? nextCol + afPay : 0;
-      $('nextTxt').innerHTML = `Te faltan <b>${fmt(falta)}</b> para llegar a <b>${t.code}${i+2}</b>. Con eso tu pago sería <b>${fmt(nextTotal)}</b> (${gain >= 0 ? '+' : ''}${fmt(gain)})` +
+      $('nextTxt').innerHTML = `Te faltan <b>${fmt(falta)}</b> para llegar a <b>${t.code}${i+2}</b>. Con eso tu ${role === 're' ? 'pago' : 'estimado a pagar'} sería <b>${fmt(nextTotal / div)}</b> (${gain >= 0 ? '+' : ''}${fmt(gain / div)})` +
         (t.entra && t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} de incentivo al entrar (única ocasión).` : '.')
         + (t.salto ? ` La base de ${t.code}${i+2} ya incluye un salto de ${fmt(t.salto[i+1])}.` : '');
       $('barWrap').setAttribute('aria-label', 'Llevas ' + Math.round(into*100) + '% del bloque ' + code);
