@@ -39,6 +39,7 @@ body{margin:0}[hidden]{display:none!important}
 .trip h3{margin:6px 0 0;font-size:22px}
 .trip p{margin:6px 0 0;color:#CFE3D6;font-size:14.5px}
 .fine{color:var(--muted);font-size:13px;margin:12px 0 0}
+.trip-aviso{border:2px solid var(--warn);border-radius:18px}
 </style>
 </head>
 <body>
@@ -117,6 +118,11 @@ body{margin:0}[hidden]{display:none!important}
         <div><div class="lbl">INCLUYE</div><p>Traslados, hospedaje y monedero para comidas de 2 personas.</p></div>
       </div>
 
+      <div class="tip warn trip-aviso" role="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <div><h3>Importante: viaje o Paquete C, no ambos</h3><p>Si estás en el Top 3 y no quieres viajar, puedes elegir en su lugar un premio del <b>Paquete C</b> (Platino). Recibes uno u otro: el viaje o el premio del Paquete C, pero no ambos.</p></div>
+      </div>
+
       <div class="card">
         <h2>Tips para afiliar</h2>
         <p class="hint">Aparecen según tu avance.</p>
@@ -179,7 +185,7 @@ body{margin:0}[hidden]{display:none!important}
     if (dias < 3) tips.push(['warn', 'Gana tus días de descanso', `Cada mes con 6 o más afiliaciones válidas te da 1 día. Llevas ${dias} de 3.`]);
     if (next && next <= TOP) tips.push(['tip', 'Tu siguiente meta', `Con ${next - total} más ${next === TOP ? 'puedes ' + names[next] : 'llegas ' + al(names[next])}. Pide recomendaciones a tus aliadas de personas que trabajan con vales.`]);
     tips.push(['tip', 'Afilia con calidad', 'Solo cuentan las afiliaciones válidas: haz la misma revisión que al colocar y acompaña a la aliada en sus primeros 30 días.']);
-    if (tier && tier[0] === 'C' && total >= TOP) tips.unshift(['ok', '¡Vas por todo!', 'Ya tienes el Paquete C y compites por el viaje. Sigue sumando: el Top 3 se define por quién afilia más.']);
+    if (tier && tier[0] === 'C' && total >= TOP) tips.unshift(['ok', '¡Vas por todo!', 'Ya tienes el Paquete C y compites por el viaje. Sigue sumando: el Top 3 se define por quién afilia más. Si quedas en el Top 3 eliges el viaje o un premio del Paquete C, no ambos.']);
     $('tips').innerHTML = tips.map(t => tip(...t)).join('');
   }
 

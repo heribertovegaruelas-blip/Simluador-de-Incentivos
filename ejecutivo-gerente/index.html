@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulador Captavale · Ejecutivo y Gerente</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/estilo.css">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header>
+  <div class="c1"></div><div class="c2"></div>
+  <div class="wrap">
+    <img class="logo" src="../assets/logo.png" alt="Captavale">
+    <nav class="sheets" aria-label="Hojas del simulador"><a class="sheet" href="index.html" aria-current="page">Esquema de incentivos</a><a class="sheet" href="campana.html">Campaña Suma aliadas</a></nav>
+    <span class="chip">Captavale · Incentivos 2026 · Ejecutivo y Gerente de sucursal</span>
+    <h1>Simula tu incentivo</h1>
+    <p>Mueve los controles con tus números y mira cuánto cobrarías, cuánto te falta para el siguiente bloque y qué puedes hacer para ganar más.</p>
+    <div class="tabs" role="group" aria-label="Puesto">
+      <button class="tab" type="button" data-role="ej" aria-pressed="true">Ejecutivo de cuenta</button>
+      <button class="tab" type="button" data-role="ge" aria-pressed="false">Gerente de sucursal</button>
+    </div>
+    <div class="formula" aria-label="Fórmula del cálculo"><div class="lbl">ASÍ SE CALCULA</div><div class="ftoks" id="ftoks"></div></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <form class="card" id="form" autocomplete="off">
+      <h2 id="formTitle">Tus números del mes</h2>
+      <p class="hint" id="formHint">Datos de ejemplo. Cámbialos por los tuyos.</p>
+
+      <div class="field">
+        <label for="colNum"><span id="colLabel">Colocación del mes</span><small id="colSmall">monto entregado</small></label>
+        <div class="row"><input type="range" id="colRange" aria-label="Colocación"><input class="num" id="colNum" inputmode="numeric"></div>
+      </div>
+      <div class="field">
+        <label for="cobNum">Efectividad de cobranza <small>% cobrado</small></label>
+        <div class="row"><input type="range" id="cobRange" min="80" max="105" step="0.1" aria-label="Cobranza"><input class="num short" id="cobNum" inputmode="decimal"></div>
+      </div>
+      <div class="field" id="afNField">
+        <label for="afNNum"><span id="afLabelTxt">Afiliaciones del mes</span><small id="afSmall">número de aliadas nuevas</small></label>
+        <div class="row"><input type="range" id="afNRange" min="0" max="35" step="1" aria-label="Afiliaciones"><input class="num short" id="afNNum" inputmode="numeric"></div>
+      </div>
+      <div class="field" id="rentField">
+        <label for="rentNum">Rentabilidad acumulada <small>candado: 15% o más</small></label>
+        <div class="row"><input type="range" id="rentRange" min="0" max="40" step="0.5" aria-label="Rentabilidad"><input class="num short" id="rentNum" inputmode="decimal"></div>
+      </div>
+      <div class="field" id="audField">
+        <label for="audNum">Evaluación de auditoría <small>candado: 95% o más</small></label>
+        <div class="row"><input type="range" id="audRange" min="70" max="100" step="1" aria-label="Auditoría"><input class="num short" id="audNum" inputmode="decimal"></div>
+      </div>
+
+      <div class="checks">
+        <label class="check" id="firstBlockWrap"><input type="checkbox" id="firstBlock"><span id="firstBlockTxt">Es la primera vez que llego a este bloque</span></label>
+        <label class="check" id="firstAfWrap"><input type="checkbox" id="firstAf"><span>Es la primera vez que llego a este tramo de afiliación (bono de entrada)</span></label>
+        <label class="check" id="oldWrap"><input type="checkbox" id="oldBranch" checked><span>La sucursal tiene más de 1 año (aplica el candado de rentabilidad)</span></label>
+      </div>
+    </form>
+
+    <section class="result" aria-live="polite">
+      <div class="hero">
+        <span class="lbl" id="heroLbl">Pago estimado del mes</span>
+        <div class="totalbox"><span id="totLbl">Total</span><span class="big" id="total">$0</span></div>
+        <span class="sub" id="heroSub"></span>
+        <div class="pills" id="pills"></div>
+      </div>
+
+      <div class="card">
+        <h2>Así se calcula</h2>
+        <p class="hint">Paso a paso con tus números.</p>
+        <div class="breakdown" id="breakdown"></div>
+      </div>
+
+      <div class="card progress">
+        <h2>Tu siguiente bloque</h2>
+        <div class="bar" role="img" id="barWrap" aria-label="Avance dentro del bloque"><i id="bar" style="width:0%"></i></div>
+        <p id="nextTxt"></p>
+      </div>
+
+      <div class="card">
+        <h2>Tips para ti</h2>
+        <p class="hint">Aparecen según lo que más te está restando.</p>
+        <div class="tips" id="tips"></div>
+      </div>
+
+      <div class="card">
+        <h2>Tablas de cobranza y afiliación</h2>
+        <p class="hint" id="multHint"></p>
+        <div class="scroll"><table class="mtable" id="mtable"></table></div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer><div class="wrap">Simulador informativo con el esquema de la presentación ejecutiva de octubre 2026 (actualización del 21/10/2026). El pago real lo valida Nómina con las cifras cerradas del periodo.</div></footer>
+
+<script>
+(function(){
+  const fmt = v => '$' + Math.round(v).toLocaleString('en-US');
+  const fmtM = v => '$' + (v/1e6).toLocaleString('en-US',{maximumFractionDigits:2}) + ' M';
+  const pct = v => (Math.round(v*1000)/10).toString().replace(/\.0$/,'') ;
+  const num = n => n.toLocaleString('en-US');
+
+  // ---------------- Tablas del esquema (presentación ejecutiva, octubre 2026)
+  // Colocación: base del bloque + tasa marginal × excedente; "entra" = incentivo al entrar al bloque (única ocasión).
+  const EJ = {
+    code:'C', step:1e6, period:'mes',
+    base:[250,1000,2000,3500,6000,7000,8000,11000,13000,15000,16000,20000,22000,24000,26000,35000],
+    tasa:[.0008,.0008,.0008,.0009,.0009,.0010,.0010,.0011,.0011,.0012,.0012,.0013,.0013,.0014,.0015,.0015],
+    entra:[500,1000,1000,1000,1000,2000,2000,2000,2000,2000,4000,4000,4000,6000,6000,8000]
+  };
+  const GE = {
+    code:'G', step:2e6, period:'mes',
+    base:[0,1000,2000,3500,5500,9000,10500,12500,15000,18000,21000,25000,29000,36000,42500,50000],
+    tasa:[.00026,.00027,.00029,.00030,.00031,.00033,.00034,.00036,.00038,.00039,.00041,.00043,.00045,.00047,.00050,.00052],
+    entra:[500,500,500,1000,1000,1000,2000,2000,2000,3000,3000,4000,4000,6000,6000,0]
+  };
+  const RE = {
+    code:'B', step:15e6, period:'trimestre',
+    base:[5000,7750,11150,15050,19600,24650,30350,36550,43400,50900,58900,67550,76850,86800,97400,108500,120250,132650,145700,159400,173750],
+    tasa:[.00015,.00016,.00016,.00017,.00017,.00018,.00018,.00019,.00020,.00020,.00021,.00022,.00023,.00024,.00024,.00025,.00026,.00027,.00028,.00029,.00030],
+    // El salto de la tabla regional ($0 a $10,000) ya está incluido en la base de cada bloque: no se paga aparte.
+    salto:[0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,8500,9000,9500,10000],
+    entra:null
+  };
+  // Multiplicador de cobranza (igual para los tres niveles)
+  const EFF = [[100,'100% o más',1.30],[99,'99.0% a 99.9%',1.20],[98,'98.0% a 98.9%',1.15],[97,'97.0% a 97.9%',1.10],
+               [96,'96.0% a 96.9%',1.00],[95,'95.0% a 95.9%',0.70],[90,'90.0% a 94.9%',0.40],[-1,'Menos de 90%',0]];
+  const effRow = p => EFF.findIndex(r => p >= r[0]);
+  // Pago por afiliación: [mínimo, máximo, pago, bono de entrada]
+  const AF_EJ = [[1,1,200,0],[2,3,800,0],[4,6,2000,1000],[7,9,4200,2000],[10,12,7000,3000],[13,15,10500,4000],[16,18,14500,5000],
+                 [19,21,19000,6000],[22,24,24000,7000],[25,27,30000,8000],[28,30,35000,9000],[31,Infinity,40000,10000]];
+  const AF_GE = [[1,4,0,0],[5,10,200,0],[11,20,750,0],[21,30,1500,1000],[31,40,3000,2000],[41,50,6000,3000],[51,60,10000,4000],
+                 [61,70,15000,5000],[71,80,17500,6000],[81,90,24000,7000],[91,100,28000,8000],[101,Infinity,35000,9000]];
+  const AF_RE = [[1,100,0,0],[101,200,1000,0],[201,300,5000,1000],[301,400,9000,2000],[401,500,14000,3000],[501,600,20000,4000],
+                 [601,700,30000,5000],[701,Infinity,50000,6000]];
+  const afTramo = (T, n) => T.find(t => n >= t[0] && n <= t[1]) || null;
+  const afLabel = t => t[1] === Infinity ? num(t[0]) + ' o más' : (t[0] === t[1] ? String(t[0]) : num(t[0]) + ' a ' + num(t[1]));
+
+  const ROLES = {
+    ej:{tbl:EJ, af:AF_EJ, title:'Tus números del mes', col:'Colocación del mes', colSmall:'monto entregado', colMax:20e6, colStep:50000,
+        afTxt:'Afiliaciones del mes', afSmall:'número de aliadas nuevas', afMax:35,
+        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar, única ocasión)',
+        sample:{col:4500000,cob:98,afN:8,rent:25,aud:96}},
+    ge:{tbl:GE, af:AF_GE, title:'Los números de tu sucursal', col:'Colocación de la sucursal', colSmall:'suma de tus ejecutivos en el mes', colMax:40e6, colStep:100000,
+        afTxt:'Afiliaciones de la sucursal', afSmall:'suma de tus ejecutivos en el mes', afMax:120,
+        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (incentivo al entrar, única ocasión)',
+        sample:{col:10500000,cob:97,afN:25,rent:25,aud:96}},
+    re:{tbl:RE, af:AF_RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
+        afTxt:'Afiliaciones de la región', afSmall:'suma del trimestre', afMax:800,
+        hero:'Pago estimado del trimestre', firstTxt:'',
+        sample:{col:125000000,cob:99,afN:250,rent:16,aud:96}}
+  };
+
+  const FORMULA = {
+    ej:[['Base del bloque','según tu colocación',0],'+',['Tasa × excedente','lo que pasas del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'+',['Incentivo al entrar','bloque y tramo · única ocasión',0]],
+    ge:[['Base del bloque','colocación de la sucursal',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'+',['Incentivo al entrar','única ocasión',0],'→',['Candados','rentabilidad y auditoría',0]],
+    re:[['Base del bloque','colocación del trimestre',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'→',['Candados','rentabilidad y auditoría',0]]
+  };
+  const PERMITIDOS = ['ej','ge'];
+  let role = 'ej';
+  try { const r = localStorage.getItem('captavale-sim-role-ejecutivo-gerente'); if (r && PERMITIDOS.includes(r)) role = r; } catch(e){}
+  const $ = id => document.getElementById(id);
+  const pairs = [['colRange','colNum'],['cobRange','cobNum'],['afNRange','afNNum'],['rentRange','rentNum'],['audRange','audNum']];
+
+  function blockOf(t, amt){ return Math.min(Math.floor(Math.max(amt,0) / t.step), t.base.length - 1); }
+
+  function setRole(r){
+    role = r;
+    try { localStorage.setItem('captavale-sim-role-ejecutivo-gerente', r); } catch(e){}
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.role === r)));
+    const R = ROLES[r];
+    $('formTitle').textContent = R.title;
+    $('colLabel').textContent = R.col; $('colSmall').textContent = R.colSmall;
+    $('colRange').max = R.colMax; $('colRange').step = R.colStep; $('colRange').min = 0;
+    $('afLabelTxt').textContent = R.afTxt; $('afSmall').textContent = R.afSmall; $('afNRange').max = R.afMax;
+    $('heroLbl').textContent = R.hero;
+    $('ftoks').innerHTML = FORMULA[r].map(x => typeof x === 'string' ? `<span class="op">${x}</span>` : `<div class="tok${x[2]?' l':''}">${x[0]}<small>${x[1]}</small></div>`).join('');
+    $('rentField').hidden = r === 'ej';
+    $('audField').hidden = r === 'ej';
+    $('oldWrap').hidden = r !== 'ge';
+    $('firstBlockWrap').hidden = r === 're';
+    $('firstBlockTxt').textContent = R.firstTxt;
+    const s = R.sample;
+    setVal('col', s.col); setVal('cob', s.cob); setVal('afN', s.afN); setVal('rent', s.rent); setVal('aud', s.aud);
+    $('firstBlock').checked = false; $('firstAf').checked = false;
+    $('formHint').textContent = 'Datos de ejemplo de la propuesta. Cámbialos por los tuyos.';
+    calc();
+  }
+  function setVal(k, v){
+    $(k+'Range').value = v;
+    $(k+'Num').value = (k === 'col' || k === 'afN') ? Math.round(v).toLocaleString('en-US') : String(v);
+  }
+  function getVal(k){
+    const v = parseFloat(String($(k+'Num').value).replace(/[^0-9.]/g,''));
+    return isNaN(v) ? 0 : v;
+  }
+
+  const ICON = {
+    tip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>',
+    warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>'
+  };
+  function tipHTML(kind, title, body, list){
+    const cls = kind === 'ok' || kind === 'tip' ? '' : kind;
+    const ic = kind === 'ok' ? ICON.ok : (kind === 'tip' ? ICON.tip : ICON.warn);
+    return `<div class="tip ${cls}">${ic}<div><h3>${title}</h3><p>${body}</p>${list ? '<ul>' + list.map(x => '<li>' + x + '</li>').join('') + '</ul>' : ''}</div></div>`;
+  }
+  const TIPS_COB = ['Llama o visita 2 días antes de cada vencimiento, sobre todo en el primer pago.',
+                    'Revisa tu cartera cada día: un atraso de 1 día se arregla hoy.',
+                    'Antes de colocar, valida domicilio, referencias y cuánto puede pagar la aliada.'];
+  const TIPS_AF = ['Pide recomendaciones a tus aliadas de personas que trabajan con vales.',
+                   'Pide referidas a tus mejores aliadas: una aliada que paga bien recomienda a otras igual.',
+                   'Mide tu avance cada semana; no esperes al día 30.'];
+  const TIPS_GE_AF = ['Revisa cada semana el avance de afiliación de cada ejecutivo.',
+                      'Acompaña a quien lleva menos de 4 afiliaciones: desde 4 al mes cada ejecutivo cobra $2,000 por afiliación.',
+                      'Activa a las aliadas nuevas en sus primeros 30 días.'];
+  const TIPS_RE_AF = ['Pide a cada gerente su plan semanal de afiliación.',
+                      'Compara sucursales cada semana y apoya a las que van abajo del ritmo.',
+                      'Recuerda que la campaña Suma aliadas premia a las ejecutivas: úsala para empujar el trimestre.'];
+
+  function calc(){
+    const R = ROLES[role], t = R.tbl, AF = R.af;
+    const col = getVal('col'), cob = getVal('cob'), afN = Math.floor(getVal('afN')), rent = getVal('rent'), aud = getVal('aud');
+    const i = blockOf(t, col), code = t.code + (i+1);
+    const desde = i * t.step, extraAmt = Math.max(col - desde, 0);
+    const base = t.base[i], extra = t.tasa[i] * extraAmt, sub = base + extra;
+    const ci = effRow(cob), cm = EFF[ci][2];
+    const lines = [], tips = [], pills = [];
+
+    lines.push(['Bloque alcanzado', code + ' · desde ' + fmtM(desde)]);
+    lines.push(['Incentivo base ' + code, fmt(base)]);
+    lines.push(['+ tasa ' + (t.tasa[i]*100).toFixed(t.tasa[i] < .001 ? 3 : 2) + '% × ' + fmt(extraAmt), fmt(extra)]);
+    lines.push(['Subtotal por colocación', fmt(sub), 'b']);
+    lines.push(['× cobranza ' + pct(cob/100) + '%', cm.toFixed(2) + 'x']);
+    const colPart = Math.round(sub * cm * 100) / 100;
+    lines.push(['= colocación con cobranza', fmt(colPart)]);
+
+    const tr = afTramo(AF, afN), afPay = tr ? tr[2] : 0;
+    lines.push(['+ ' + num(afN) + ' afiliaciones' + (tr ? ' (tramo ' + afLabel(tr) + ')' : ''), fmt(afPay)]);
+    let entra = 0, bonoAf = 0;
+    if ($('firstBlock').checked && t.entra && t.entra[i]){ entra = t.entra[i]; lines.push(['+ incentivo al entrar a ' + code + ' (única ocasión)', fmt(entra)]); }
+    if ($('firstAf').checked && tr && tr[3]){ bonoAf = tr[3]; lines.push(['+ bono de entrada al tramo (una vez)', fmt(bonoAf)]); }
+    const gross = colPart + afPay + entra + bonoAf;
+
+    let candadosOk = true, total = gross;
+    if (role !== 'ej'){
+      const needRent = role === 're' || $('oldBranch').checked;
+      const rentOk = !needRent || rent >= 15, audOk = aud >= 95;
+      candadosOk = rentOk && audOk;
+      lines.push(['Candados (rentabilidad ' + pct(rent/100) + '%, auditoría ' + pct(aud/100) + '%)', candadosOk ? 'Cumple' : 'No cumple', candadosOk ? '' : 'm']);
+      total = candadosOk ? gross : 0;
+      if (!candadosOk){
+        tips.push(['bad', 'Sin candados no hay pago', (!rentOk ? 'La rentabilidad está en ' + pct(rent/100) + '% y el mínimo es 15%. ' : '') + (!audOk ? 'La auditoría está en ' + pct(aud/100) + '% y el mínimo es 95%. ' : '') + 'Con los candados cumplidos cobrarías ' + fmt(gross) + '.',
+          ['Revisa gastos y castigos de cartera ' + (role==='ge'?'de la sucursal':'de cada sucursal') + ' cada semana.', 'Prepara la auditoría con la lista de puntos revisados y corrige los pendientes antes de la visita.']]);
+      }
+    }
+
+    $('total').textContent = fmt(total);
+    $('heroSub').textContent = role === 're'
+      ? 'Se paga al cierre del trimestre. Bono anual de 3 meses de sueldo si la región supera 20% de rentabilidad (con EBITDA Capta cumpliendo al 85%).'
+      : (role === 'ge' ? 'Si tienes varias sucursales, cobras la suma de todas.' : 'Se paga el día 20 del mes siguiente.');
+    lines.push(['Pago estimado', fmt(total), 't']);
+    $('breakdown').innerHTML = lines.map(l => `<div class="line${l[2]==='t'?' total':''}${l[2]==='m'?' muted':''}"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('');
+
+    // pills
+    pills.push(['Bloque ' + code, 'ok']);
+    pills.push(['Cobranza ' + cm.toFixed(2) + 'x', cm >= 1 ? 'ok' : (cm > 0 ? 'warn' : 'bad')]);
+    pills.push([num(afN) + ' afiliaciones · ' + fmt(afPay), afPay > 0 ? 'ok' : 'warn']);
+    if (role !== 'ej') pills.push([candadosOk ? 'Candados OK' : 'Candados sin cumplir', candadosOk ? 'ok' : 'bad']);
+    $('pills').innerHTML = pills.map(p => `<span class="pill ${p[1]}">${p[0]}</span>`).join('');
+
+    // siguiente bloque
+    const last = i === t.base.length - 1;
+    const into = last ? 1 : (col - desde) / t.step;
+    $('bar').style.width = Math.max(2, Math.min(100, into*100)) + '%';
+    if (last){
+      $('nextTxt').innerHTML = 'Estás en el bloque más alto (' + code + '). Cada peso adicional suma ' + (t.tasa[i]*100).toFixed(3) + '% sobre lo que pase de ' + fmtM(desde) + '.';
+      $('barWrap').setAttribute('aria-label', 'Bloque más alto ' + code);
+    } else {
+      const falta = (i+1) * t.step - col;
+      const nextCol = t.base[i+1] * cm;
+      const gain = candadosOk ? nextCol - colPart : 0;
+      const nextTotal = candadosOk ? nextCol + afPay : 0;
+      $('nextTxt').innerHTML = `Te faltan <b>${fmt(falta)}</b> para llegar a <b>${t.code}${i+2}</b>. Con eso tu pago sería <b>${fmt(nextTotal)}</b> (${gain >= 0 ? '+' : ''}${fmt(gain)})` +
+        (t.entra && t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} de incentivo al entrar (única ocasión).` : '.')
+        + (t.salto ? ` La base de ${t.code}${i+2} ya incluye un salto de ${fmt(t.salto[i+1])}.` : '');
+      $('barWrap').setAttribute('aria-label', 'Llevas ' + Math.round(into*100) + '% del bloque ' + code);
+      if (into >= 0.75) tips.push(['tip', 'Estás muy cerca del siguiente bloque', `Solo te faltan ${fmt(falta)} para ${t.code}${i+2}. Subir de bloque vale más que crecer dentro del bloque.`]);
+    }
+
+    // tips de cobranza
+    if (cob < 90){
+      tips.unshift(['bad', 'Con menos de 90% de cobranza no hay pago por colocación', `Tu cobranza está en ${pct(cob/100)}%. Si llegas a 96%, tu pago por colocación sería ${fmt(sub)}.`, TIPS_COB]);
+    } else if (cob < 96){
+      tips.unshift(['warn', 'Tu cobranza te está restando', `Con ${pct(cob/100)}% tu colocación se multiplica por ${cm.toFixed(2)}. Llegando a 96% cobrarías ${fmt(sub)} por colocación en lugar de ${fmt(colPart)}.`, TIPS_COB]);
+    }
+    // tips de afiliación
+    const ix = tr ? AF.indexOf(tr) : -1;
+    let nt = AF[ix + 1];
+    while (nt && nt[2] === 0) nt = AF[AF.indexOf(nt) + 1];
+    const tipList = role === 'ej' ? TIPS_AF : (role === 'ge' ? TIPS_GE_AF : TIPS_RE_AF);
+    if (nt){
+      const faltan = nt[0] - afN;
+      const kind = afPay === 0 || (role === 'ej' && afN < 4) ? 'warn' : 'tip';
+      const head = afPay === 0 ? 'Empieza a cobrar por afiliación' : 'Siguiente tramo de afiliación';
+      tips.push([kind, head, `Con ${num(faltan)} ${faltan===1?'afiliación':'afiliaciones'} más (${num(nt[0])} en total) pasas al tramo ${afLabel(nt)}: ${fmt(nt[2])} en lugar de ${fmt(afPay)}${nt[3] ? ', más ' + fmt(nt[3]) + ' de bono la primera vez' : ''}.`, kind === 'warn' ? tipList : null]);
+    }
+    if (!tips.length) tips.push(['ok', 'Vas muy bien', 'Cobranza y afiliación están en verde. Mantén la cartera sana y busca el siguiente bloque.']);
+    $('tips').innerHTML = tips.map(x => tipHTML(x[0], x[1], x[2], x[3])).join('');
+
+    // tablas
+    $('multHint').textContent = 'La cobranza multiplica tu pago por colocación. La afiliación se paga aparte por tramos' + (role === 'ej' ? '.' : ' (' + (role === 'ge' ? 'afiliaciones de la sucursal en el mes' : 'afiliaciones de la región en el trimestre') + ').');
+    let h = '<thead><tr><th>Efectividad de cobranza</th><th>Multiplicador</th></tr></thead><tbody>';
+    EFF.forEach((r, k) => { h += `<tr class="${k===ci?'on':''}"><td>${r[1]}</td><td>${r[2].toFixed(2)}x</td></tr>`; });
+    h += '</tbody><thead><tr><th>Afiliaciones</th><th>Pago · bono de entrada</th></tr></thead><tbody>';
+    AF.forEach(a => { h += `<tr class="${a===tr?'on':''}"><td>${afLabel(a)}</td><td>${fmt(a[2])}${a[3]?' · bono '+fmt(a[3]):''}</td></tr>`; });
+    $('mtable').innerHTML = h + '</tbody>';
+  }
+
+  pairs.forEach(([r, n]) => {
+    const k = r.replace('Range','');
+    $(r).addEventListener('input', () => { setVal(k, parseFloat($(r).value)); calc(); });
+    $(n).addEventListener('input', () => { $(r).value = getVal(k); calc(); });
+    $(n).addEventListener('blur', () => setVal(k, getVal(k)));
+  });
+  ['firstBlock','firstAf','oldBranch'].forEach(id => $(id).addEventListener('change', calc));
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
+  $('form').addEventListener('submit', e => e.preventDefault());
+  setRole(role);
+})();
+</script>
+
+</body>
+</html>

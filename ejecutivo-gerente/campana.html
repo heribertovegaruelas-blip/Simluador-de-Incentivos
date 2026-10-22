@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Campaña Suma aliadas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/estilo.css">
+<style>
+body{margin:0}[hidden]{display:none!important}
+.months{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.month{border-radius:16px;padding:14px;background:var(--surface-2);display:flex;flex-direction:column;gap:4px}
+.month b{font-size:12px;letter-spacing:.14em;color:var(--brand-2)}
+.month .n{font-size:30px;font-weight:800;line-height:1;color:var(--title);font-variant-numeric:tabular-nums}
+.month .tag{font-size:12.5px;font-weight:700;padding:3px 9px;border-radius:999px;align-self:flex-start}
+.tag.ok{background:#C8E85A;color:#0A4D2C}
+.tag.no{background:var(--warn-bg);color:var(--warn)}
+.tag.bad{background:var(--bad-bg);color:var(--bad)}
+.track{position:relative;height:18px;background:var(--surface-2);border-radius:999px;margin:34px 0 30px}
+.track i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--mid),var(--lime));border-radius:999px;transition:width .25s}
+.mark{position:absolute;top:-30px;transform:translateX(-50%);font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap}
+.mark::after{content:"";position:absolute;left:50%;top:22px;width:2px;height:26px;background:var(--line)}
+.mark.hit{color:var(--title)}
+.mark.low{top:26px}
+.mark.low::after{top:-30px}
+.pkgs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:640px){.pkgs,.months{grid-template-columns:minmax(0,1fr)}}
+.pkg{border-radius:18px;padding:16px;border-top:6px solid var(--c);background:var(--surface);box-shadow:var(--shadow);opacity:.6}
+.pkg.on{opacity:1;box-shadow:0 0 0 3px #C8E85A, var(--shadow)}
+.pkg .L{font-size:34px;font-weight:800;line-height:1;color:var(--c)}
+.pkg small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.pkg ul{list-style:none;margin:10px 0 0;padding:0}
+.pkg li{font-size:14px;padding:7px 0;border-bottom:1px solid var(--line)}
+.pkg li:last-child{border-bottom:0}
+.trip{background:linear-gradient(135deg,#0A4D2C 0%,#0F6B3D 100%);color:#fff;border-radius:22px;padding:22px;display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:18px;box-shadow:0 12px 32px rgba(10,77,44,.22)}
+@media (max-width:640px){.trip{grid-template-columns:minmax(0,1fr)}}
+.trip .lbl{font-size:12px;font-weight:800;letter-spacing:.16em;color:#C8E85A}
+.trip h3{margin:6px 0 0;font-size:22px}
+.trip p{margin:6px 0 0;color:#CFE3D6;font-size:14.5px}
+.fine{color:var(--muted);font-size:13px;margin:12px 0 0}
+.trip-aviso{border:2px solid var(--warn);border-radius:18px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="c1"></div><div class="c2"></div>
+  <div class="wrap">
+    <img class="logo" src="../assets/logo.png" alt="Captavale">
+    <nav class="sheets" aria-label="Hojas del simulador"><a class="sheet" href="index.html">Esquema de incentivos</a><a class="sheet" href="campana.html" aria-current="page">Campaña Suma aliadas</a></nav>
+    <span class="chip">Campaña · Ejecutivas</span>
+    <h1>Suma aliadas a tu red</h1>
+    <p>Captura tus afiliaciones válidas de cada mes del trimestre y mira qué días de descanso y qué paquete de premios ganas.</p>
+    <div class="formula" aria-label="Cómo se gana"><div class="lbl">CÓMO GANAS</div><div class="ftoks">
+      <div class="tok l">Cada mes: 6+<small>= 1 día de descanso</small></div><span class="op">+</span>
+      <div class="tok">Condición<small>2+ válidas cada mes</small></div><span class="op">→</span>
+      <div class="tok l">Plata 20–25<small>Paquete A</small></div>
+      <div class="tok l">Oro 26–35<small>Paquete B</small></div>
+      <div class="tok l">Platino 36+<small>Paquete C</small></div>
+      <div class="tok">Top 3 nacional<small>mínimo 45 · viaje para dos</small></div>
+    </div></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <form class="card" id="form" autocomplete="off">
+      <h2>Tus afiliaciones válidas</h2>
+      <p class="hint">Datos de ejemplo. Cámbialos por los tuyos.</p>
+      <div class="field">
+        <label for="m1Num">Mes 1 <small>afiliaciones válidas</small></label>
+        <div class="row"><input type="range" id="m1Range" min="0" max="25" step="1" aria-label="Mes 1"><input class="num short" id="m1Num" inputmode="numeric"></div>
+      </div>
+      <div class="field">
+        <label for="m2Num">Mes 2 <small>afiliaciones válidas</small></label>
+        <div class="row"><input type="range" id="m2Range" min="0" max="25" step="1" aria-label="Mes 2"><input class="num short" id="m2Num" inputmode="numeric"></div>
+      </div>
+      <div class="field">
+        <label for="m3Num">Mes 3 <small>afiliaciones válidas</small></label>
+        <div class="row"><input type="range" id="m3Range" min="0" max="25" step="1" aria-label="Mes 3"><input class="num short" id="m3Num" inputmode="numeric"></div>
+      </div>
+      <div class="months" id="months"></div>
+    </form>
+
+    <section class="result" aria-live="polite">
+      <div class="hero">
+        <span class="lbl">Tu premio del trimestre</span>
+        <div class="totalbox"><span id="totLbl">Premio</span><span class="big" id="prize" style="font-size:clamp(26px,4.5vw,40px)">–</span></div>
+        <span class="sub" id="heroSub"></span>
+        <div class="pills" id="pills"></div>
+      </div>
+
+      <div class="card progress">
+        <h2>Tu avance del trimestre</h2>
+        <div class="track" role="img" id="track"><i id="fill" style="width:0%"></i>
+          <span class="mark" style="left:40%" id="k20">20 · Plata</span>
+          <span class="mark" style="left:52%" id="k26">26 · Oro</span>
+          <span class="mark" style="left:72%" id="k36">36 · Platino</span>
+          <span class="mark low" style="left:90%" id="k45">45 · Top 3</span>
+        </div>
+        <p id="nextTxt"></p>
+      </div>
+
+      <div class="card">
+        <h2>Catálogo: tú eliges tu premio</h2>
+        <p class="hint">Se resalta el paquete que te toca.</p>
+        <div class="pkgs">
+          <div class="pkg" id="pA" style="--c:#5F6B78"><div class="L">A</div><small>Plata · 20–25</small><ul><li>AirPods 4</li><li>Kindle (2026)</li><li>Galaxy Buds3 FE</li><li>Monedero electrónico $3,000</li></ul></div>
+          <div class="pkg" id="pB" style="--c:#8C6418"><div class="L">B</div><small>Oro · 26–35</small><ul><li>Apple Watch SE 3</li><li>Kindle Colorsoft</li><li>Galaxy Watch8</li><li>Monedero electrónico $5,000</li></ul></div>
+          <div class="pkg" id="pC" style="--c:#2B3A4A"><div class="L">C</div><small>Platino · 36+</small><ul><li>iPad 11"</li><li>Apple Watch Series 12</li><li>Pantalla Samsung 55" 4K</li><li>Monedero electrónico $7,000</li></ul></div>
+        </div>
+      </div>
+
+      <div class="trip">
+        <div><div class="lbl">PREMIO ESPECIAL · TOP 3</div><h3>Viaje nacional para dos</h3><p>3 días / 2 noches todo incluido con vuelo.</p></div>
+        <div><div class="lbl">ELIGE DESTINO</div><p>Mazatlán · Oaxaca · San Miguel de Allende</p></div>
+        <div><div class="lbl">INCLUYE</div><p>Traslados, hospedaje y monedero para comidas de 2 personas.</p></div>
+      </div>
+
+      <div class="tip warn trip-aviso" role="note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <div><h3>Importante: viaje o Paquete C, no ambos</h3><p>Si estás en el Top 3 y no quieres viajar, puedes elegir en su lugar un premio del <b>Paquete C</b> (Platino). Recibes uno u otro: el viaje o el premio del Paquete C, pero no ambos.</p></div>
+      </div>
+
+      <div class="card">
+        <h2>Tips para afiliar</h2>
+        <p class="hint">Aparecen según tu avance.</p>
+        <div class="tips" id="tips"></div>
+        <p class="fine">Los premios no se cambian por efectivo; si un modelo sube de precio, se entrega uno equivalente. Las afiliaciones válidas las confirma el área de Afiliación al cierre.</p>
+      </div>
+    </section>
+  </div>
+</main>
+<footer><div class="wrap">Simulador informativo de la campaña "Suma aliadas a tu red" (presentación ejecutiva, actualización del 21/10/2026). Los días de descanso se usan en enero–febrero de 2027 con autorización de tu gerente.</div></footer>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const sample = {m1:6, m2:9, m3:8};
+  const ICON = {
+    tip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>',
+    warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>'
+  };
+  const tip = (k, h, p) => `<div class="tip ${k==='ok'||k==='tip'?'':k}">${k==='ok'?ICON.ok:(k==='tip'?ICON.tip:ICON.warn)}<div><h3>${h}</h3><p>${p}</p></div></div>`;
+  const get = k => { const v = parseInt(String($(k+'Num').value).replace(/[^0-9]/g,''), 10); return isNaN(v) ? 0 : Math.max(0, v); };
+  const set = (k, v) => { $(k+'Range').value = v; $(k+'Num').value = v; };
+  const TIERS = [['C','Paquete C · Platino',36],['B','Paquete B · Oro',26],['A','Paquete A · Plata',20]];
+  const DIA = 6, TOP = 45;
+
+  function calc(){
+    const m = [get('m1'), get('m2'), get('m3')];
+    const total = m.reduce((a,b) => a+b, 0);
+    const cond = m.every(x => x >= 2);
+    const dias = Math.min(3, m.filter(x => x >= DIA).length);
+    const tier = cond ? TIERS.find(t => total >= t[2]) : null;
+
+    $('months').innerHTML = m.map((x, i) => `<div class="month"><b>MES ${i+1}</b><span class="n">${x}</span>` +
+      `<span class="tag ${x >= DIA ? 'ok' : 'no'}">${x >= DIA ? '1 día de descanso' : 'Faltan ' + (DIA-x) + ' para el día'}</span>` +
+      `<span class="tag ${x >= 2 ? 'ok' : 'bad'}">${x >= 2 ? 'Condición cumplida' : 'Mínimo 2 válidas'}</span></div>`).join('');
+
+    $('prize').textContent = tier ? tier[1] : 'Aún sin premio';
+    $('heroSub').textContent = tier ? 'Un solo premio: el más alto que ganes. Eliges 1 opción de tu paquete.' : (cond ? 'Necesitas 20 afiliaciones válidas en el trimestre para el Paquete A.' : 'Para el premio necesitas al menos 2 afiliaciones válidas en cada mes.');
+    $('pills').innerHTML = [[total + ' afiliaciones en el trimestre', total >= 20 ? 'ok' : 'warn'],
+      [dias + ' de 3 días de descanso', dias ? 'ok' : 'warn'],
+      [cond ? 'Condición mensual OK' : 'Falta condición mensual', cond ? 'ok' : 'bad'],
+      [total >= TOP ? 'Compites por el viaje' : 'Viaje: mínimo ' + TOP, total >= TOP ? 'ok' : '']]
+      .map(p => `<span class="pill ${p[1]}">${p[0]}</span>`).join('');
+
+    $('fill').style.width = Math.min(100, total / 50 * 100) + '%';
+    [['k20',20],['k26',26],['k36',36],['k45',45]].forEach(([id, v]) => $(id).classList.toggle('hit', total >= v));
+    $('track').setAttribute('aria-label', 'Llevas ' + total + ' afiliaciones válidas en el trimestre');
+    ['A','B','C'].forEach(k => $('p'+k).classList.toggle('on', !!tier && tier[0] === k));
+
+    const goals = [20, 26, 36, 45];
+    const next = goals.find(g => total < g);
+    const names = {20:'el Paquete A (Plata)', 26:'el Paquete B (Oro)', 36:'el Paquete C (Platino)', 45:'competir por el viaje del Top 3 nacional'};
+    const af = n => n + (n === 1 ? ' afiliación válida' : ' afiliaciones válidas');
+    const al = s => s.replace(/^el /, 'al ');
+    $('nextTxt').innerHTML = next ? `Te ${next - total === 1 ? 'falta' : 'faltan'} <b>${af(next - total)}</b> para ${names[next]}.` : 'Ya llegas a 45 afiliaciones: estás compitiendo por el <b>viaje para dos</b> con las mejores del país.';
+
+    const tips = [];
+    m.forEach((x, i) => { if (x < 2) tips.push(['bad', `Mes ${i+1}: te falta la condición`, `Necesitas al menos 2 afiliaciones válidas en cada mes; en el mes ${i+1} llevas ${x}. Sin esto no hay premio del trimestre.`]); });
+    if (dias < 3) tips.push(['warn', 'Gana tus días de descanso', `Cada mes con 6 o más afiliaciones válidas te da 1 día. Llevas ${dias} de 3.`]);
+    if (next && next <= TOP) tips.push(['tip', 'Tu siguiente meta', `Con ${next - total} más ${next === TOP ? 'puedes ' + names[next] : 'llegas ' + al(names[next])}. Pide recomendaciones a tus aliadas de personas que trabajan con vales.`]);
+    tips.push(['tip', 'Afilia con calidad', 'Solo cuentan las afiliaciones válidas: haz la misma revisión que al colocar y acompaña a la aliada en sus primeros 30 días.']);
+    if (tier && tier[0] === 'C' && total >= TOP) tips.unshift(['ok', '¡Vas por todo!', 'Ya tienes el Paquete C y compites por el viaje. Sigue sumando: el Top 3 se define por quién afilia más. Si quedas en el Top 3 eliges el viaje o un premio del Paquete C, no ambos.']);
+    $('tips').innerHTML = tips.map(t => tip(...t)).join('');
+  }
+
+  ['m1','m2','m3'].forEach(k => {
+    set(k, sample[k]);
+    $(k+'Range').addEventListener('input', () => { set(k, $(k+'Range').value); calc(); });
+    $(k+'Num').addEventListener('input', () => { $(k+'Range').value = get(k); calc(); });
+    $(k+'Num').addEventListener('blur', () => set(k, get(k)));
+  });
+  $('form').addEventListener('submit', e => e.preventDefault());
+  calc();
+})();
+</script>
+</body>
+</html>

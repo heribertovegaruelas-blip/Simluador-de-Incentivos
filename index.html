@@ -108,7 +108,7 @@
   const num = n => n.toLocaleString('en-US');
 
   // ---------------- Tablas del esquema (presentación ejecutiva, octubre 2026)
-  // Colocación: base del bloque + tasa marginal × excedente; "entra" = incentivo/salto al entrar al bloque (una vez).
+  // Colocación: base del bloque + tasa marginal × excedente; "entra" = incentivo al entrar al bloque (única ocasión).
   const EJ = {
     code:'C', step:1e6, period:'mes',
     base:[250,1000,2000,3500,6000,7000,8000,11000,13000,15000,16000,20000,22000,24000,26000,35000],
@@ -146,11 +146,11 @@
   const ROLES = {
     ej:{tbl:EJ, af:AF_EJ, title:'Tus números del mes', col:'Colocación del mes', colSmall:'monto entregado', colMax:20e6, colStep:50000,
         afTxt:'Afiliaciones del mes', afSmall:'número de aliadas nuevas', afMax:35,
-        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar)',
+        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que llego a este bloque (incentivo al entrar, única ocasión)',
         sample:{col:4500000,cob:98,afN:8,rent:25,aud:96}},
     ge:{tbl:GE, af:AF_GE, title:'Los números de tu sucursal', col:'Colocación de la sucursal', colSmall:'suma de tus ejecutivos en el mes', colMax:40e6, colStep:100000,
         afTxt:'Afiliaciones de la sucursal', afSmall:'suma de tus ejecutivos en el mes', afMax:120,
-        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (salto al entrar)',
+        hero:'Pago estimado del mes', firstTxt:'Es la primera vez que la sucursal llega a este bloque (incentivo al entrar, única ocasión)',
         sample:{col:10500000,cob:97,afN:25,rent:25,aud:96}},
     re:{tbl:RE, af:AF_RE, title:'Los números de tu región', col:'Colocación del trimestre', colSmall:'suma de 3 meses de la región', colMax:330e6, colStep:500000,
         afTxt:'Afiliaciones de la región', afSmall:'suma del trimestre', afMax:800,
@@ -159,8 +159,8 @@
   };
 
   const FORMULA = {
-    ej:[['Base del bloque','según tu colocación',0],'+',['Tasa × excedente','lo que pasas del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'+',['Bonos de entrada','bloque y tramo, una vez',0]],
-    ge:[['Base del bloque','colocación de la sucursal',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'→',['Candados','rentabilidad y auditoría',0]],
+    ej:[['Base del bloque','según tu colocación',0],'+',['Tasa × excedente','lo que pasas del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'+',['Incentivo al entrar','bloque y tramo · única ocasión',0]],
+    ge:[['Base del bloque','colocación de la sucursal',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'+',['Incentivo al entrar','única ocasión',0],'→',['Candados','rentabilidad y auditoría',0]],
     re:[['Base del bloque','colocación del trimestre',0],'+',['Tasa × excedente','lo que pasa del inicio',0],'×',['Cobranza','0 a 1.30x',1],'+',['Afiliación','pago por tramo',1],'→',['Candados','rentabilidad y auditoría',0]]
   };
   let role = 'ej';
@@ -244,7 +244,7 @@
     const tr = afTramo(AF, afN), afPay = tr ? tr[2] : 0;
     lines.push(['+ ' + num(afN) + ' afiliaciones' + (tr ? ' (tramo ' + afLabel(tr) + ')' : ''), fmt(afPay)]);
     let entra = 0, bonoAf = 0;
-    if ($('firstBlock').checked && t.entra && t.entra[i]){ entra = t.entra[i]; lines.push(['+ ' + (role==='ej'?'incentivo':'salto') + ' al entrar a ' + code + ' (una vez)', fmt(entra)]); }
+    if ($('firstBlock').checked && t.entra && t.entra[i]){ entra = t.entra[i]; lines.push(['+ incentivo al entrar a ' + code + ' (única ocasión)', fmt(entra)]); }
     if ($('firstAf').checked && tr && tr[3]){ bonoAf = tr[3]; lines.push(['+ bono de entrada al tramo (una vez)', fmt(bonoAf)]); }
     const gross = colPart + afPay + entra + bonoAf;
 
@@ -288,7 +288,7 @@
       const gain = candadosOk ? nextCol - colPart : 0;
       const nextTotal = candadosOk ? nextCol + afPay : 0;
       $('nextTxt').innerHTML = `Te faltan <b>${fmt(falta)}</b> para llegar a <b>${t.code}${i+2}</b>. Con eso tu pago sería <b>${fmt(nextTotal)}</b> (${gain >= 0 ? '+' : ''}${fmt(gain)})` +
-        (t.entra && t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} ${role==='ej'?'de incentivo al entrar':'de salto al entrar'} la primera vez.` : '.')
+        (t.entra && t.entra[i+1] ? `, más ${fmt(t.entra[i+1])} de incentivo al entrar (única ocasión).` : '.')
         + (t.salto ? ` La base de ${t.code}${i+2} ya incluye un salto de ${fmt(t.salto[i+1])}.` : '');
       $('barWrap').setAttribute('aria-label', 'Llevas ' + Math.round(into*100) + '% del bloque ' + code);
       if (into >= 0.75) tips.push(['tip', 'Estás muy cerca del siguiente bloque', `Solo te faltan ${fmt(falta)} para ${t.code}${i+2}. Subir de bloque vale más que crecer dentro del bloque.`]);
